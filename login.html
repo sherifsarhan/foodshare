@@ -19,6 +19,26 @@
 
 <script src="scripts.js"></script>
 
+<form id="testform">
+<div class="container">
+    <label><b>Username</b></label>
+    <input type="text" placeholder="Username" name="uname" required>
+</div>
+<div>
+    <label><b>Password</b></label>
+    <input type="password"
+           placeholder="Password"
+           title="The password must be at least 6 characters long and contain a number."
+           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+           name="pword"
+           required>
+</div>
+<div>
+    <button type="submit">Login</button>
+    <input type="checkbox" checked="checked"> Remember me
+</div>
+</form>
+
 </body>
 
 </html>
