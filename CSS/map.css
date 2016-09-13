@@ -1,8 +1,8 @@
 html,
 body,
 #viewDiv {
-    padding: 0;
-    margin: 0;
-    height: 90%;
+    padding: 10px;
+    margin: auto;
+    height: 89%;
     width: 90%;
 }
