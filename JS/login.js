@@ -13,7 +13,8 @@ $( document ).ready(function() {
         hideIfOnPage("#logsuccess");
         hideIfOnPage("#logfail");
         var uname = $("#uname");
-        if (uname.text() == "mboudrig" || uname.text() == "ssarhan2"){
+        console.log(uname.val());
+        if (uname.val() == "mboudrig" || uname.val() == "ssarhan2"){
             $("<br /><br /><div id='logsuccess'>Welcome Back!</div>").insertAfter("#chkbox");
         }
         else{
