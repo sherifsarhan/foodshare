@@ -28,3 +28,37 @@ require([
     });
 
 });
+
+//--------------JS FUNCTIONS-----------------
+function hideIfOnPage(hideID) {
+    if ($(hideID).length){
+        ($(hideID)).hide();
+        return true;
+    }
+    return false;
+}
+
+//-------------DOCUMENT READY----------------
+$( document ).ready(function() {
+
+    $("#mapselect").change(function() {
+        if ($( "#mapselect option:selected" ).text() == "Food Type"){
+            hideIfOnPage("#location");
+            hideIfOnPage("#quantity");
+            $("<div id='foodtype'>Food Type was selected</div>").insertAfter("#mapselect");
+        }
+        else{
+            if ($( "#mapselect option:selected" ).text() == "Location"){
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#quantity");
+                $("<div id='location'>Location was selected</div>").insertAfter("#mapselect");
+            }
+            else{
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#location");
+                $("<div id='quantity'>Quantity was selected</div>").insertAfter("#mapselect");
+            }
+        }
+    });
+
+});
