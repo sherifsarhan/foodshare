@@ -1,3 +1,4 @@
+//---------------ARCGIS API------------------
 require([
     "esri/Map",
     "esri/views/MapView",
@@ -42,13 +43,14 @@ function hideIfOnPage(hideID) {
 $( document ).ready(function() {
 
     $("#mapselect").change(function() {
-        if ($( "#mapselect option:selected" ).text() == "Food Type"){
+        var currentlySelected = $("#mapselect option:selected");
+        if (currentlySelected.text() == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
             $("<div id='foodtype'>Food Type was selected</div>").insertAfter("#mapselect");
         }
         else{
-            if ($( "#mapselect option:selected" ).text() == "Location"){
+            if (currentlySelected.text() == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
                 $("<div id='location'>Location was selected</div>").insertAfter("#mapselect");
