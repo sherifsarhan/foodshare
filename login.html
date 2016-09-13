@@ -25,11 +25,12 @@
 <form id="loginForm">
 <div class="container">
     <label><b>Username</b></label>
-    <input type="text" placeholder="Username" name="uname" required>
+    <input id="uname" type="text" placeholder="Username" name="uname" required>
 </div>
 <div>
     <label><b>Password</b></label>
-    <input type="password"
+    <input id="pword"
+           type="password"
            placeholder="Password"
            title="The password must be at least 6 characters long and contain a number."
            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
@@ -37,8 +38,8 @@
            required>
 </div>
 <div>
-    <button class="btn-highlight" type="submit">Login</button>
-    <label for="chkbox"><b>Remember Me</b></label><input type="checkbox" checked="checked" id="chkbox">
+    <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
+    <label for="chkbox"><b>Remember Me</b></label><input id="chkbox" type="checkbox" checked="checked">
 </div>
 </form>
 
