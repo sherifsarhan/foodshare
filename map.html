@@ -7,11 +7,11 @@
     <title>Food Share - Map</title>
     <meta name="description" content="Food Share - Map">
 
-    <link rel="stylesheet" href="styles.css?v=1.0">
+    <link rel="stylesheet" href="CSS/styles.css?v=1.0">
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
     <script src="https://js.arcgis.com/4.0/" ></script>
-    <script src="scripts.js" ></script>
+    <script src="JS/scripts.js" ></script>
 
 </head>
 
@@ -19,9 +19,26 @@
 
 <a href="main.html">Main</a>
 <a href="login.html">Login</a>
-<a href="map.html">Map</a>
+<a href="map.html">Map</a> <br /><br />
 
     <div id="viewDiv"></div>
+
+<script src="JS/scripts.js"></script>
+
+<form id="mapform">
+    <label for="mapselect"><b>Map Select:</b></label> <select id="mapselect">
+        <option value="" disabled="disabled" selected="selected">Select a Map Filter</option>
+        <option value="foodtype">Food Type</option>
+        <option value="location">Location</option>
+        <option value="quantity">Quantity</option>
+    </select>
+</form>
+
+
+<br /><br />
+<a href="https://developers.arcgis.com/javascript/">ArcGIS API which will be used here</a>
+
+
 
 </body>
 
