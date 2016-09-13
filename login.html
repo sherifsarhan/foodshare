@@ -1,0 +1,56 @@
+<!--This is a login and registration page for users of the application-->
+
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Food Share - Login</title>
+    <meta name="description" content="Food Share - Login">
+
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="JS/login.js"></script>
+
+    <link rel="stylesheet" href="CSS/login.css?v=1.0">
+
+
+
+</head>
+
+<body>
+
+<div class="fixed_top_navbar">
+    <a class="link" href="index.html">Main</a>
+    <a class="link" href="login.html">Login</a>
+    <a class="link" href="map.html">Map</a>
+</div>
+
+<form id="loginForm">
+    <div class="container">
+        <label><b>Username</b></label>
+        <input id="uname" type="text" placeholder="Username" name="uname" required>
+    </div>
+    <div>
+        <label><b>Password</b></label>
+        <input id="pword"
+               type="password"
+               placeholder="Password"
+               title="The password must be at least 6 characters long and contain a number."
+               pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+               name="pword"
+               required>
+    </div>
+    <div>
+        <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
+        <label for="chkbox"><b>Remember Me</b></label><input id="chkbox" type="checkbox" checked="checked">
+    </div>
+</form>
+
+<div class="fixed_bottom_banner">
+    Please Donate to our Punchstarter!
+</div>
+
+</body>
+
+</html>
