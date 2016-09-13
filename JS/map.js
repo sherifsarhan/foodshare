@@ -31,6 +31,8 @@ require([
 });
 
 //--------------JS FUNCTIONS-----------------
+
+//Accepts an ID, if it can locate the ID on the oage it will be hidden.
 function hideIfOnPage(hideID) {
     if ($(hideID).length){
         ($(hideID)).hide();
@@ -43,14 +45,14 @@ function hideIfOnPage(hideID) {
 $( document ).ready(function() {
 
     $("#mapselect").change(function() {
-        var currentlySelected = $("#mapselect option:selected");
-        if (currentlySelected.text() == "Food Type"){
+        var currentlySelected = $('#mapselect').find(":selected").text();
+        if (currentlySelected == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
             $("<div id='foodtype'>Food Type was selected</div>").insertAfter("#mapselect");
         }
         else{
-            if (currentlySelected.text() == "Location"){
+            if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
                 $("<div id='location'>Location was selected</div>").insertAfter("#mapselect");
