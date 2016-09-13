@@ -6,7 +6,7 @@ require([
 ], function(Map, MapView, Locate) {
 
     var map = new Map({
-        basemap: "streets"
+        basemap: "topo"
     });
 
     var view = new MapView({
