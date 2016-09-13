@@ -12,7 +12,8 @@ $( document ).ready(function() {
     $("#loginbtn").click(function() {
         hideIfOnPage("#logsuccess");
         hideIfOnPage("#logfail");
-        if ($("#uname").text() == "mboudrig" || $("#uname").text() == "ssarhan2"){
+        var uname = $("#uname");
+        if (uname.text() == "mboudrig" || uname.text() == "ssarhan2"){
             $("<br /><br /><div id='logsuccess'>Welcome Back!</div>").insertAfter("#chkbox");
         }
         else{
