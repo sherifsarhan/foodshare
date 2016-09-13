@@ -1,17 +1,40 @@
-/*.button {*/
-    /*background-color: #4CAF50;*/
-    /*border: none;*/
-    /*color: white;*/
-    /*padding: 15px 32px;*/
-    /*text-align: center;*/
-    /*text-decoration: none;*/
-    /*display: inline-block;*/
-    /*font-size: 16px;*/
-    /*margin: 4px 2px;*/
-    /*cursor: pointer;*/
-/*}*/
-
 button.btn-highlight:hover {
     background-color: lawngreen;
     /*color: lawngreen;*/
 }
+
+a.link{
+    color: antiquewhite;
+}
+
+form {
+    margin: auto;
+    padding: 50px;
+}
+
+div.fixed_top_navbar{
+    position: fixed;
+    border: 3px solid;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: auto;
+    padding: 10px;
+    background-color: darkslategrey;
+    text-align: center;
+    color: antiquewhite;
+}
+
+div.fixed_bottom_banner{
+    position: fixed;
+    border: 3px solid;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    padding: 10px;
+    background-color: darkslategrey;
+    text-align: center;
+    color: antiquewhite;
+}
+

@@ -6,3 +6,38 @@ body,
     height: 89%;
     width: 90%;
 }
+
+a.link{
+    color: antiquewhite;
+}
+
+div.mapform{
+    padding-top: 5%;
+    margin: auto;
+}
+
+div.fixed_top_navbar{
+    position: fixed;
+    border: 3px solid;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: auto;
+    padding: 10px;
+    background-color: darkslategrey;
+    text-align: center;
+    color: antiquewhite;
+}
+
+div.fixed_bottom_banner{
+    position: fixed;
+    border: 3px solid;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    padding: 10px;
+    background-color: darkslategrey;
+    text-align: center;
+    color: antiquewhite;
+}
