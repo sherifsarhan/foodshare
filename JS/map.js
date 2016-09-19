@@ -32,7 +32,7 @@ require([
 
 //--------------JS FUNCTIONS-----------------
 
-//Accepts an ID, if it can locate the ID on the oage it will be hidden.
+//Takes an ID, hides it if its currently on the page, returns bool on what happened.
 function hideIfOnPage(hideID) {
     if ($(hideID).length){
         ($(hideID)).hide();
@@ -41,28 +41,37 @@ function hideIfOnPage(hideID) {
     return false;
 }
 
-//-------------DOCUMENT READY----------------
-$( document ).ready(function() {
 
+
+//-------------DOCUMENT READY----------------
+$(document).ready(function() {
+
+    //Initially hides the elements which will be toggled by the select
+    hideIfOnPage("#location");
+    hideIfOnPage("#quantity");
+    hideIfOnPage("#foodtype");
+
+    //when the select changes display the desired div and hide any that are currently showing.
     $("#mapselect").change(function() {
         var currentlySelected = $('#mapselect').find(":selected").text();
         if (currentlySelected == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
-            $("<div id='foodtype'>Food Type was selected</div>").insertAfter("#mapselect");
+            $("#foodtype").show();
         }
         else{
             if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
-                $("<div id='location'>Location was selected</div>").insertAfter("#mapselect");
+                $("#location").show();
             }
             else{
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#location");
-                $("<div id='quantity'>Quantity was selected</div>").insertAfter("#mapselect");
+                $("#quantity").show();
             }
         }
     });
 
 });
+
