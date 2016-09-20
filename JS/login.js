@@ -9,13 +9,6 @@ function hideIfOnPage(hideID) {
     return false;
 }
 
-function myblur() {
-    if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test($("#pword").val()))) {
-        alert("The password must be at least 6 characters long and contain a number.");
-        $("#pword").focus();
-    }
-};
-
 //-------------DOCUMENT READY----------------
 $( document ).ready(function() {
 
@@ -26,18 +19,10 @@ $( document ).ready(function() {
         var uname = $("#uname");
         console.log(uname.val());
         if (uname.val() == "mboudrig" || uname.val() == "ssarhan2"){
-            $("<br /><br /><div id='logsuccess'>Welcome Back!</div>").insertAfter("#chkbox");
+            $("<div id='logsuccess'>Welcome Back!</div>").insertAfter("#chkbox");
         }
         else{
-            $("<br /><br /><div id='logfail'>Access Denied.</div>").insertAfter("#chkbox");
-        }
-    });
-
-    //Forces the user to use a valid password before they are able to move on.
-    $("#pword").on('blur', function(){
-        if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test($("#pword").val()))){
-            alert("The password must be at least 6 characters long and contain a number.");
-            $("#pword").focus();
+            $("<div id='logfail'>Access Denied.</div>").insertAfter("#chkbox");
         }
     });
 
