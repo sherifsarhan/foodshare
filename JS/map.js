@@ -35,17 +35,20 @@ $(document).ready(function() {
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
             $("#foodtype").show();
+            console.log($("#foodtype").data("food-id"));
         }
         else{
             if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
                 $("#location").show();
+                console.log($("#location").data("loc-id"));
             }
             else{
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#location");
                 $("#quantity").show();
+                console.log($("#quantity").data("quan-id"));
             }
         }
     });
