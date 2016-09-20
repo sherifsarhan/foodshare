@@ -62,7 +62,8 @@ WHILE THE LOGIN FORM IS POPPED UP, THE USER IS RETURNED TO THE ORIGINAL LOGIN PA
             <label><b>Password</b></label>
             <input type="password" placeholder="Enter Password" name="pword" required
                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
-                   title="The password must be at least 6 characters long and contain a number.">
+                   title="The password must be at least 6 characters long and contain a number."
+                    onblur="myblur()">
 
             <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
             Remember me <input id="chkbox" type="checkbox" checked="checked">

@@ -9,6 +9,13 @@ function hideIfOnPage(hideID) {
     return false;
 }
 
+function myblur() {
+    if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test($("#pword").val()))) {
+        alert("The password must be at least 6 characters long and contain a number.");
+        $("#pword").focus();
+    }
+};
+
 //-------------DOCUMENT READY----------------
 $( document ).ready(function() {
 
@@ -27,7 +34,7 @@ $( document ).ready(function() {
     });
 
     //Forces the user to use a valid password before they are able to move on.
-    $("#pword").blur(function(){
+    $("#pword").on('blur', function(){
         if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test($("#pword").val()))){
             alert("The password must be at least 6 characters long and contain a number.");
             $("#pword").focus();
