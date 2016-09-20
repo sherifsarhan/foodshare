@@ -1,36 +1,15 @@
-//---------------ARCGIS API------------------
-require([
-    "esri/Map",
-    "esri/views/MapView",
-    "esri/widgets/Locate",
-    "dojo/domReady!"
-], function(Map, MapView, Locate) {
-
-    var map = new Map({
-        basemap: "topo"
+//--------------GOOGLE MAPS-----------------
+function initMap() {
+    var mapDiv = document.getElementById('map');
+    var map = new google.maps.Map(mapDiv, {
+        center: {lat: 38.8320, lng: -77.3116},
+        zoom: 16
     });
-
-    var view = new MapView({
-        container: "viewDiv",
-        map: map,
-        zoom: 5,
-        center: [-99, 36]
-    });
-
-    var locateBtn = new Locate({
-        view: view
-    });
-    locateBtn.startup();
-
-    // Add the locate widget to the top left corner of the view
-    view.ui.add(locateBtn, {
-        position: "top-left",
-        index: 0
-    });
-
-});
+}
 
 //--------------JS FUNCTIONS-----------------
+
+//Takes an ID, hides it if its currently on the page, returns bool on what happened.
 function hideIfOnPage(hideID) {
     if ($(hideID).length){
         ($(hideID)).hide();
@@ -39,28 +18,40 @@ function hideIfOnPage(hideID) {
     return false;
 }
 
-//-------------DOCUMENT READY----------------
-$( document ).ready(function() {
 
+
+//-------------DOCUMENT READY----------------
+$(document).ready(function() {
+
+    //Initially hides the elements which will be toggled by the select
+    hideIfOnPage("#location");
+    hideIfOnPage("#quantity");
+    hideIfOnPage("#foodtype");
+
+    //when the select changes display the desired div and hide any that are currently showing.
     $("#mapselect").change(function() {
-        var currentlySelected = $("#mapselect option:selected");
-        if (currentlySelected.text() == "Food Type"){
+        var currentlySelected = $('#mapselect').find(":selected").text();
+        if (currentlySelected == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
-            $("<div id='foodtype'>Food Type was selected</div>").insertAfter("#mapselect");
+            $("#foodtype").show();
+            console.log($("#foodtype").data("food-id"));
         }
         else{
-            if (currentlySelected.text() == "Location"){
+            if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
-                $("<div id='location'>Location was selected</div>").insertAfter("#mapselect");
+                $("#location").show();
+                console.log($("#location").data("loc-id"));
             }
             else{
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#location");
-                $("<div id='quantity'>Quantity was selected</div>").insertAfter("#mapselect");
+                $("#quantity").show();
+                console.log($("#quantity").data("quan-id"));
             }
         }
     });
 
 });
+
