@@ -5,8 +5,26 @@ function initMap() {
         center: {lat: 38.8320, lng: -77.3116},
         zoom: 16
     });
+
+    var marker = new google.maps.Marker({
+        position: {
+            lat: 38.8315,
+            lng: -77.3090
+        },
+        map: map
+    });
+    attachMessage(marker, "leftover chipotle");
 }
 
+function attachMessage(marker, message) {
+    var infowindow = new google.maps.InfoWindow({
+        content: message
+    });
+
+    marker.addListener('click', function() {
+        infowindow.open(marker.get('map'), marker);
+    });
+}
 //--------------JS FUNCTIONS-----------------
 
 //Takes an ID, hides it if its currently on the page, returns bool on what happened.
@@ -34,21 +52,24 @@ $(document).ready(function() {
         if (currentlySelected == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
-            $("#foodtype").show();
-            console.log($("#foodtype").data("food-id"));
+            foodtype = $("#foodtype");
+            foodtype.show();
+            console.log(foodtype.data("food-id"));
         }
         else{
             if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
-                $("#location").show();
-                console.log($("#location").data("loc-id"));
+                location = $("#location");
+                location.show();
+                console.log(location.data("loc-id"));
             }
             else{
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#location");
-                $("#quantity").show();
-                console.log($("#quantity").data("quan-id"));
+                quantity = $("#quantity");
+                quantity.show();
+                console.log(quantity.data("quan-id"));
             }
         }
     });
