@@ -25,27 +25,55 @@
     <a class="link" href="map.html">Map</a>
 </div>
 
+<!--<form id="loginForm">-->
+    <!--<div class="container">-->
+        <!--<label><b>Username</b></label>-->
+        <!--<input id="uname" type="text" placeholder="Username" name="uname" required>-->
+    <!--</div>-->
+    <!--<div>-->
+        <!--<label><b>Password</b></label>-->
+        <!--<input id="pword"-->
+               <!--type="password"-->
+               <!--placeholder="Password"-->
+               <!--title="The password must be at least 6 characters long and contain a number."-->
+               <!--pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"-->
+               <!--name="pword"-->
+               <!--required>-->
+    <!--</div>-->
+    <!--<div>-->
+        <!--<button id="loginbtn" class="btn-highlight" type="submit">Login</button>-->
+        <!--<label for="chkbox"><b>Remember Me</b></label><input id="chkbox" type="checkbox" checked="checked">-->
+    <!--</div>-->
+<!--</form>-->
 
-<form id="loginForm">
-    <div class="container">
-        <label><b>Username</b></label>
-        <input id="uname" type="text" placeholder="Username" name="uname" required>
-    </div>
-    <div>
-        <label><b>Password</b></label>
-        <input id="pword"
-               type="password"
-               placeholder="Password"
-               title="The password must be at least 6 characters long and contain a number."
-               pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
-               name="pword"
-               required>
-    </div>
-    <div>
-        <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
-        <label for="chkbox"><b>Remember Me</b></label><input id="chkbox" type="checkbox" checked="checked">
-    </div>
-</form>
+<!--THE FOLLOWING LOGIN FORM POPS UP AND CLOSES
+ADDITIONALLY, WE HAVE HISTORY MANIPULATION HERE SO THAT WHEN A USER PRESSES THE BACK BUTTON
+WHILE THE LOGIN FORM IS POPPED UP, THE USER IS RETURNED TO THE ORIGINAL LOGIN PAGE HTML-->
+<br><br>
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+
+<div id="id01" class="modal">
+
+    <form class="modal-content animate">
+        <div class="container">
+            <label><b>Username</b></label>
+            <input id="uname" type="text" placeholder="Enter Username" name="uname" required>
+
+            <label><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="pword" required
+                   pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+                   title="The password must be at least 6 characters long and contain a number.">
+
+            <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
+            Remember me <input id="chkbox" type="checkbox" checked="checked">
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+    </form>
+</div>
 
 <div class="fixed_bottom_banner">
     Please Donate to our Punchstarter!
