@@ -6,6 +6,18 @@ function initMap() {
         zoom: 16
     });
 
+    map.addListener('click', function(e) {
+        placeMarkerAndPanTo(e.latLng, map);
+    });
+
+    function placeMarkerAndPanTo(latLng, map) {
+        var marker = new google.maps.Marker({
+            position: latLng,
+            map: map
+        });
+        map.panTo(latLng);
+    };
+
     var marker = new google.maps.Marker({
         position: {
             lat: 38.8315,
