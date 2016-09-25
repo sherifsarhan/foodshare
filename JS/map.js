@@ -15,7 +15,16 @@ function initMap() {
             position: latLng,
             map: map
         });
-        map.panTo(latLng);
+
+        var infowindow = new google.maps.InfoWindow({
+            content: '<div contentEditable="true">foasod</div>'
+        });
+
+        marker.addListener('click', function() {
+            infowindow.open(marker.get('map'), marker);
+        });
+
+        infowindow.open(marker.get('map'), marker);
     };
 
     var marker = new google.maps.Marker({
@@ -31,10 +40,6 @@ function initMap() {
 function attachMessage(marker, message) {
     var infowindow = new google.maps.InfoWindow({
         content: message
-    });
-
-    marker.addListener('click', function() {
-        infowindow.open(marker.get('map'), marker);
     });
 }
 //--------------JS FUNCTIONS-----------------
