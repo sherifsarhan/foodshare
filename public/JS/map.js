@@ -10,9 +10,11 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
-
-//--------------GOOGLE MAPS-----------------
 var submitClicked = false;
+var markerCountStr;
+var latLng;
+var marker;
+//--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
     var map = new google.maps.Map(mapDiv, {
@@ -20,18 +22,25 @@ function initMap() {
         zoom: 16
     });
 
+    var markerCount = 0;
     var markers = [];
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
+        $('#infoDiv').show();
+
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
+            markerCount--;
         }
         submitClicked = false;
         firstRun = false;
 
-        var latLng = e.latLng;
-        var marker = addMarker(latLng, map);
+        latLng = e.latLng;
+        marker = addMarker(latLng, map);
+        markers.push(marker);
+        $('#lat').text(latLng.lat());
+        $('#lng').text(latLng.lng());
         // foodshareRef.push({'lat' : latLng.lat(), 'lng' : latLng.lng()});
 
         prevMarker = marker;
@@ -39,36 +48,19 @@ function initMap() {
 
     // adds a new marker to the map
     function addMarker(latLng, map) {
+        markerCount++;
+        markerCountStr = markerCount.toString();
         var marker = new google.maps.Marker({
             position: latLng,
             map: map
         });
 
-        // creates the info window for the marker
-        var infowindow = new google.maps.InfoWindow({
-            // content: '<div contentEditable="true">Add food info</div>'
-            content:
-            '<div class="infoClass">' +
-            '<input type="text" placeholder="Enter food info" required>' +
-            '<button onclick="submitAction()" class="sbmtFood" type="submit">Submit</button>' +
-            '</div>'
-        });
-
-        // open the infowindow when a marker is added to the map
-        infowindow.open(marker.get('map'), marker);
-
-        // shows the info window if a marker gets clicked
-        marker.addListener('click', function() {
-            infowindow.open(marker.get('map'), marker);
-        });
         return marker;
     }
     google.maps.event.addDomListener(window, "load", initMap);
+
 }
 
-function submitAction() {
-    submitClicked = true;
-}
 
 function attachMessage(marker, message) {
     var infowindow = new google.maps.InfoWindow({
@@ -90,6 +82,7 @@ function hideIfOnPage(hideID) {
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
+    $('#infoDiv').hide();
 
     //Initially hides the elements which will be toggled by the select
     hideIfOnPage("#location");
@@ -124,5 +117,15 @@ $(document).ready(function() {
         }
     });
 
+    $('.sbmtFood').on('click', function () {
+        foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
+        // // creates the info window for the marker
+        var infowindow = new google.maps.InfoWindow({
+            content: $('.foodInfo').val()
+        });
+        // open the infowindow to the corresponding marker
+        infowindow.open(marker.get('map'), marker);
+        submitClicked = true;
+    });
 });
 
