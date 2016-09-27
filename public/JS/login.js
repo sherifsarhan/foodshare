@@ -33,7 +33,7 @@ $( document ).ready(function() {
 // When the user clicks anywhere outside of the modal, close it
     document.onclick = function(event) {
         //have the state ready for when the user wants to click back
-        history.pushState(null, null, "/foodshare/login.html");
+        history.pushState(null, null, "login.html");
         if (event.target == modal) {
             modal.style.display = "none";
         }
