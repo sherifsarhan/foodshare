@@ -10,10 +10,12 @@
     <title>Food Share - Login</title>
     <meta name="description" content="Food Share - Login">
 
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="JS/login.js"></script>
 
     <link rel="stylesheet" href="CSS/login.css?v=1.0">
+
 
 </head>
 
@@ -51,22 +53,21 @@ ADDITIONALLY, WE HAVE HISTORY MANIPULATION HERE SO THAT WHEN A USER PRESSES THE 
 WHILE THE LOGIN FORM IS POPPED UP, THE USER IS RETURNED TO THE ORIGINAL LOGIN PAGE HTML-->
 <br><br>
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
 
 <div id="id01" class="modal">
 
     <form class="modal-content animate">
         <div class="container">
-            <label><b>Username</b></label>
+            <label><b>Email</b></label>
             <input id="uname" type="text" placeholder="Enter Username" name="uname" required>
 
             <label><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="pword" required
+            <input id="pword" type="password" placeholder="Enter Password" name="pword" required
                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
-                   title="The password must be at least 6 characters long and contain a number."
-                    onblur="myblur()">
+                   title="The password must be at least 6 characters long and contain a number.">
 
             <button id="loginbtn" class="btn-highlight" type="submit">Login</button>
-            Remember me <input id="chkbox" type="checkbox" checked="checked">
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
@@ -74,6 +75,27 @@ WHILE THE LOGIN FORM IS POPPED UP, THE USER IS RETURNED TO THE ORIGINAL LOGIN PA
             <span class="psw">Forgot <a href="#">password?</a></span>
         </div>
     </form>
+</div>
+
+<div id="id02" class="modal">
+
+  <div class="modal-content animate">
+    <div class="container">
+      <label><b>Username</b></label>
+      <input id="unamer" type="text" placeholder="Enter Username" name="uname" required>
+
+      <label><b>Password</b></label>
+      <input id="pwordr" type="password" placeholder="Enter Password" name="pword" required
+             pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+             title="The password must be at least 6 characters long and contain a number.">
+
+      <button id="regbtn" class="btn-highlight">Register</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <div class="fixed_bottom_banner">

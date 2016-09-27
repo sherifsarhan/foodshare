@@ -16,8 +16,11 @@ will record this data.-->
     <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" href="CSS/map.css?v=1.0">
-
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="JS/map.js" type="text/javascript"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaLT-2yZGBOd4O9teeuXSA-vvdtbPzkiI&callback=initMap">
+    </script>
 
 </head>
 
@@ -43,11 +46,17 @@ will record this data.-->
 <div id='foodtype' data-food-id="1">Food Type was selected</div><div id='location' data-loc-id="2">Location was selected</div><div id='quantity' data-quan-id="3">Quantity was selected</div>
 <br /><br />
 
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaLT-2yZGBOd4O9teeuXSA-vvdtbPzkiI&callback=initMap">
-</script>
-
 <div id="map"></div>
+
+<div id="infoDiv">
+    <input class="foodInfo"type="text" placeholder="Enter food info" required>
+    <button class="sbmtFood">Submit</button>
+    <button class="delFood">Delete</button>
+    <br>
+    <div id="lat"></div>
+    <div id="lng"></div>
+
+</div>
 
 <div class="fixed_bottom_banner">
     Please Donate to our Punchstarter!
