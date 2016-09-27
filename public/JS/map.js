@@ -43,7 +43,7 @@ function initMap() {
         $('#lat').text(latLng.lat());
         $('#lng').text(latLng.lng());
 
-        selectedMarker = marker;
+        // selectedMarker = marker;
         prevMarker = marker;
     });
 }
@@ -140,7 +140,21 @@ $(document).ready(function() {
     });
 
     $('.sbmtFood').on('click', function () {
-        foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
+        //if we are updating the text of a selected marker
+        if (selectedMarker){
+            for(key in markers) {
+                if (key - 1 == selectedMarker.id) {
+                    selectedMarker.text = $('.foodInfo').val();
+                    //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
+                    foodshareRef.child(selectedMarker.key).set(
+                        {'food' : selectedMarker.text,'lat' : selectedMarker.position.lat(), 'lng' : selectedMarker.position.lng()}
+                    );
+                }
+            }
+        }
+        else{
+            foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
+        }
 
         submitClicked = true;
     });
