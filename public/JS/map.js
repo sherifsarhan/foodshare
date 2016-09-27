@@ -121,7 +121,7 @@ $(document).ready(function() {
         if (currentlySelected == "Food Type"){
             hideIfOnPage("#location");
             hideIfOnPage("#quantity");
-            foodtype = $("#foodtype");
+            var foodtype = $("#foodtype");
             foodtype.show();
             console.log(foodtype.data("food-id"));
         }
@@ -129,14 +129,14 @@ $(document).ready(function() {
             if (currentlySelected == "Location"){
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#quantity");
-                location = $("#location");
+                var location = $("#location");
                 location.show();
                 console.log(location.data("loc-id"));
             }
             else{
                 hideIfOnPage("#foodtype");
                 hideIfOnPage("#location");
-                quantity = $("#quantity");
+                var quantity = $("#quantity");
                 quantity.show();
                 console.log(quantity.data("quan-id"));
             }
