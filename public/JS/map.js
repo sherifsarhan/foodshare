@@ -11,6 +11,7 @@ firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
 
+var selectedMarker;
 var submitClicked = false;
 var latLng;
 var markers = {};
@@ -42,6 +43,7 @@ function initMap() {
         $('#lat').text(latLng.lat());
         $('#lng').text(latLng.lng());
 
+        selectedMarker = marker;
         prevMarker = marker;
     });
 }
@@ -62,7 +64,6 @@ function addMarker(latLng, map, text, key) {
     return marker;
 }
 
-var selectedMarker;
 foodshareRef.on("child_added", function(data){
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key);
@@ -86,6 +87,8 @@ foodshareRef.on("child_added", function(data){
         selectedMarker = tempMarker;
         console.log(tempMarker.id);
     });
+
+    $('.delFood').on('click', deleteMarker);
 });
 
 //--------------JS FUNCTIONS-----------------
@@ -142,16 +145,32 @@ $(document).ready(function() {
         submitClicked = true;
     });
 
-    $('.delFood').on('click', function () {
-        //delete the selectedMarker and redraw the map
-        for(key in markers){
-            if (key-1 == selectedMarker.id){
-                delete markers[key];
-                foodshareRef.child(selectedMarker.key).remove();
-                break;
-            }
-        }
-    });
+    $('.delFood').on('click', deleteMarker);
+
+    // // Sets the map on all markers in the array.
+    // function setMapOnAll(map) {
+    //     for (key in markers) {
+    //         markers[key].setMap(map);
+    //     }
+    // }
 
 });
+
+function deleteMarker (){
+    //delete the selectedMarker and redraw the map
+    for(key in markers){
+        if (key-1 == selectedMarker.id){
+            // setMapOnAll(null);
+            // setMapOnAll(map);
+            foodshareRef.child(selectedMarker.key).remove();
+            markers[key].setVisible(false);
+            // markers[key]
+            markers[key].setMap(null);
+            markers[key] = null;
+            delete markers[key];
+            google.maps.event.trigger(map, 'resize');
+            break;
+        }
+    }
+}
 
