@@ -11,6 +11,17 @@ firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
 
+var uid = "";
+//get user info if they're signed in
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        uid = user.uid;
+    } else {
+        // No user is signed in.
+    }
+});
+
 var selectedMarker;
 var submitClicked = false;
 var latLng;
@@ -55,28 +66,41 @@ function initMap() {
 }
 
 // adds a new marker to the map
-function addMarker(latLng, map, text, key) {
+function addMarker(latLng, map, text, key, uidDB) {
     var marker = new google.maps.Marker({
         position: latLng,
         map: map,
         id: count,
         text: text,
-        key: key
+        key: key,
+        uid: uidDB
     });
-
-    // if(count) markers[count-1].key = key;
 
     count++;
     return marker;
 }
 
-foodshareRef.on('child_changed', function (data) {
+foodshareRef.on('child_changed', function(data) {
     selectedMarker.infoWindowRef.setContent(data.val().food);
 });
 
+//if a foodshare gets deleted from the firebase db
+foodshareRef.on('child_removed', function(data) {
+    for(marker in markers){
+        if(markers[marker].key == data.key){
+            markers[marker].setMap(null);
+            markers[marker] = null;
+            delete markers[marker];
+            break;
+        }
+    }
+});
+
 foodshareRef.on("child_added", function(data){
+    //get coordinates
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
-    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key);
+
+    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
     markers[count] = tempMarker;
 
@@ -117,8 +141,6 @@ function hideIfOnPage(hideID) {
     }
     return false;
 }
-
-
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
@@ -162,29 +184,30 @@ $(document).ready(function() {
                 if (key - 1 == selectedMarker.id) {
                     selectedMarker.text = $('.foodInfo').val();
                     //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-                    foodshareRef.child(selectedMarker.key).set(
-                        {'food' : selectedMarker.text,'lat' : selectedMarker.position.lat(), 'lng' : selectedMarker.position.lng()}
-                    );
+                    foodshareRef.child(selectedMarker.key).set({
+                            'food': selectedMarker.text,
+                            'lat' : selectedMarker.position.lat(),
+                            'lng' : selectedMarker.position.lng(),
+                            'uid' : selectedMarker.uid
+                        });
                 }
             }
         }
         else{
             pointerMarker.setMap(null);
             pointerMarker = null;
-            foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
+            foodshareRef.push({
+                'food': $('.foodInfo').val(),
+                'lat' : latLng.lat(),
+                'lng' : latLng.lng(),
+                'uid' : uid
+            });
         }
 
         submitClicked = true;
     });
 
     $('.delFood').on('click', deleteMarker);
-
-    // // Sets the map on all markers in the array.
-    // function setMapOnAll(map) {
-    //     for (key in markers) {
-    //         markers[key].setMap(map);
-    //     }
-    // }
 
 });
 
@@ -196,15 +219,10 @@ function deleteMarker (){
     //delete the selectedMarker and redraw the map
     for(key in markers){
         if (key-1 == selectedMarker.id){
-            // setMapOnAll(null);
-            // setMapOnAll(map);
             foodshareRef.child(selectedMarker.key).remove();
-            markers[key].setVisible(false);
-            // markers[key]
             markers[key].setMap(null);
             markers[key] = null;
             delete markers[key];
-            google.maps.event.trigger(map, 'resize');
             break;
         }
     }
