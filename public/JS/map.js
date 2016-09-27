@@ -18,6 +18,7 @@ var markers = {};
 var infoWindows = [];
 var map;
 var count=0;
+var pointerMarker;
 //--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
@@ -29,8 +30,9 @@ function initMap() {
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
+        if (selectedMarker) $('.foodInfo').val("");
+
         selectedMarker = null;
-        $('.foodInfo').val("");
 
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
@@ -41,6 +43,7 @@ function initMap() {
 
         latLng = e.latLng;
         var marker = addMarker(latLng, map, "");
+        pointerMarker = marker;
         console.log(marker.id);
         console.log(marker.text);
         $('#lat').text(latLng.lat());
@@ -87,6 +90,8 @@ foodshareRef.on("child_added", function(data){
 
     // open the infowindow to the corresponding marker
     infoWindow.open(tempMarker.get('map'), tempMarker);
+
+    selectedMarker = tempMarker;
 
     tempMarker.addListener('click', function () {
         // var marker = this;
@@ -164,6 +169,8 @@ $(document).ready(function() {
             }
         }
         else{
+            pointerMarker.setMap(null);
+            pointerMarker = null;
             foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
         }
 
@@ -182,6 +189,10 @@ $(document).ready(function() {
 });
 
 function deleteMarker (){
+    $('#lat').text("");
+    $('#lng').text("");
+    $('.foodInfo').val("");
+
     //delete the selectedMarker and redraw the map
     for(key in markers){
         if (key-1 == selectedMarker.id){
