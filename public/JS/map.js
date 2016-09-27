@@ -29,6 +29,9 @@ function initMap() {
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
+        selectedMarker = null;
+        $('.foodInfo').val("");
+
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
             count--;
@@ -64,6 +67,10 @@ function addMarker(latLng, map, text, key) {
     return marker;
 }
 
+foodshareRef.on('child_changed', function (data) {
+    selectedMarker.infoWindowRef.setContent(data.val().food);
+});
+
 foodshareRef.on("child_added", function(data){
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key);
@@ -74,6 +81,10 @@ foodshareRef.on("child_added", function(data){
     var infoWindow = new google.maps.InfoWindow({
         content: data.val().food
     });
+
+    //keep a reference of the marker's infowindow
+    tempMarker.infoWindowRef = infoWindow;
+
     // open the infowindow to the corresponding marker
     infoWindow.open(tempMarker.get('map'), tempMarker);
 
