@@ -41,7 +41,7 @@ $( document ).ready(function() {
   });
 
   $("#regbtn").click(function() {
-    var ref = new Firebase("https://foodshare-1474316972332.firebaseio.com");
+    var ref = foodshareRef;
     ref.createUser({
       email    : $("#unamer").val(),
       password : $("#pwordr").val()

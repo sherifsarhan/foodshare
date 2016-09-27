@@ -13,7 +13,7 @@ var foodshareRef = firebase.database().ref("foodshare");
 
 var submitClicked = false;
 var latLng;
-var markers = [];
+var markers = {};
 var infoWindows = [];
 var map;
 var count=0;
@@ -28,8 +28,6 @@ function initMap() {
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
-        $('#infoDiv').show();
-
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
             count--;
@@ -45,53 +43,50 @@ function initMap() {
         $('#lng').text(latLng.lng());
 
         prevMarker = marker;
-
-        // marker.addListener('click', function () {
-        //     // open the infowindow for the corresponding marker
-        //     infoWindow.open(marker.get('map'), marker);
-        // });
     });
-
-    // adds a new marker to the map
-    function addMarker(latLng, map, text) {
-        var marker = new google.maps.Marker({
-            position: latLng,
-            map: map,
-            id: count,
-            text: text
-        });
-
-        count++;
-        return marker;
-    }
-
-    foodshareRef.on("child_added", function(data){
-        myLatLng = {lat: data.val().lat, lng: data.val().lng};
-        var tempMarker = addMarker(myLatLng, map, data.val().food);
-
-        // // creates the info window for the marker
-        var infoWindow = new google.maps.InfoWindow({
-            content: data.val().food
-        });
-        // open the infowindow to the corresponding marker
-        infoWindow.open(tempMarker.get('map'), tempMarker);
-
-        tempMarker.addListener('click', function () {
-            // var marker = this;
-            LatLng = tempMarker.position;
-            $('#lat').text(LatLng.lat());
-            $('#lng').text(LatLng.lng());
-            $('.foodInfo').val(data.val().food);
-            infoWindow.open(tempMarker.get('map'), tempMarker);
-            console.log(tempMarker.id);
-        });
-
-    });
-
-
-
-    google.maps.event.addDomListener(window, "load", initMap);
 }
+
+// adds a new marker to the map
+function addMarker(latLng, map, text, key) {
+    var marker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        id: count,
+        text: text,
+        key: key
+    });
+
+    // if(count) markers[count-1].key = key;
+
+    count++;
+    return marker;
+}
+
+var selectedMarker;
+foodshareRef.on("child_added", function(data){
+    myLatLng = {lat: data.val().lat, lng: data.val().lng};
+    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key);
+
+    markers[count] = tempMarker;
+
+    // // creates the info window for the marker
+    var infoWindow = new google.maps.InfoWindow({
+        content: data.val().food
+    });
+    // open the infowindow to the corresponding marker
+    infoWindow.open(tempMarker.get('map'), tempMarker);
+
+    tempMarker.addListener('click', function () {
+        // var marker = this;
+        LatLng = tempMarker.position;
+        $('#lat').text(LatLng.lat());
+        $('#lng').text(LatLng.lng());
+        $('.foodInfo').val(data.val().food);
+        infoWindow.open(tempMarker.get('map'), tempMarker);
+        selectedMarker = tempMarker;
+        console.log(tempMarker.id);
+    });
+});
 
 //--------------JS FUNCTIONS-----------------
 
@@ -108,8 +103,6 @@ function hideIfOnPage(hideID) {
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
-    $('#infoDiv').hide();
-
     //Initially hides the elements which will be toggled by the select
     hideIfOnPage("#location");
     hideIfOnPage("#quantity");
@@ -147,6 +140,17 @@ $(document).ready(function() {
         foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
 
         submitClicked = true;
+    });
+
+    $('.delFood').on('click', function () {
+        //delete the selectedMarker and redraw the map
+        for(key in markers){
+            if (key-1 == selectedMarker.id){
+                delete markers[key];
+                foodshareRef.child(selectedMarker.key).remove();
+                break;
+            }
+        }
     });
 
 });
