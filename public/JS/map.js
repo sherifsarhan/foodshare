@@ -26,7 +26,6 @@ var selectedMarker;
 var submitClicked = false;
 var latLng;
 var markers = {};
-var infoWindows = [];
 var map;
 var count=0;
 var pointerMarker;
@@ -38,29 +37,39 @@ function initMap() {
         zoom: 16
     });
 
+    // every time the map is clicked on,
+    // a pin is dropped and the previous pin is removed
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
+        // clear the food input box if the user clicked on the map
+        // after clicking on a pre-existing pin that populated the food
+        // input box with text
         if (selectedMarker) $('.foodInfo').val("");
 
+        // indicate that the last item to be selected
+        // is not a pre-existing pin, rather, just a temporary
+        // pin on the map while deciding where to place a foodshare
         selectedMarker = null;
 
+        // hides the previously clicked marker as long as there
+        // wasn't a recently submitted foodshare. There would need
+        // to be a brand new pin added to the map.
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
+            prevMarker = null;
             count--;
         }
         submitClicked = false;
         firstRun = false;
 
+        // get the position of the click
+        // and add a new pin theres
         latLng = e.latLng;
         var marker = addMarker(latLng, map, "");
         pointerMarker = marker;
-        console.log(marker.id);
-        console.log(marker.text);
-        $('#lat').text(latLng.lat());
-        $('#lng').text(latLng.lng());
 
-        // selectedMarker = marker;
+        // update the previous marker pointer
         prevMarker = marker;
     });
 }
@@ -212,17 +221,15 @@ $(document).ready(function() {
 });
 
 function deleteMarker (){
-    $('#lat').text("");
-    $('#lng').text("");
     $('.foodInfo').val("");
 
     //delete the selectedMarker and redraw the map
-    for(key in markers){
-        if (key-1 == selectedMarker.id){
+    for(marker in markers){
+        if (marker-1 == selectedMarker.id){
             foodshareRef.child(selectedMarker.key).remove();
-            markers[key].setMap(null);
-            markers[key] = null;
-            delete markers[key];
+            markers[marker].setMap(null);
+            markers[marker] = null;
+            delete markers[marker];
             break;
         }
     }
