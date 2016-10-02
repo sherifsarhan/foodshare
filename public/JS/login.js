@@ -28,19 +28,32 @@ function hideIfOnPage(hideID) {
 $( document ).ready(function() {
 
   $("#loginbtn").click(function() {
-    firebase.auth().signInWithEmailAndPassword($("#uname").val(), $("#pword").val()).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-    });
+    firebase.auth().signInWithEmailAndPassword($("#uname").val(), $("#pword").val())
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+            console.log(errorCode);
+            console.log(errorMessage);
+        })
+        .then(function(authData) {
+            document.getElementById('id01').style.display='none';
+
+        });
   });
 
   $("#regbtn").click(function() {
-    firebase.auth().createUserWithEmailAndPassword($("#unamer").val(), $("#pwordr").val()).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-    });
+    firebase.auth().createUserWithEmailAndPassword($("#unamer").val(), $("#pwordr").val())
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+        })
+        .then(function(authData) {
+            document.getElementById('id02').style.display='none';
+        });
   });
 
 

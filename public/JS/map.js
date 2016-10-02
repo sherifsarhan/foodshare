@@ -11,13 +11,24 @@ firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
 
+var uid = "";
+//get user info if they're signed in
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        uid = user.uid;
+    } else {
+        // No user is signed in.
+    }
+});
+
 var selectedMarker;
 var submitClicked = false;
 var latLng;
 var markers = {};
-var infoWindows = [];
 var map;
 var count=0;
+var pointerMarker;
 //--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
@@ -26,47 +37,79 @@ function initMap() {
         zoom: 16
     });
 
+    // every time the map is clicked on,
+    // a pin is dropped and the previous pin is removed
     var prevMarker;
     var firstRun = true;
     map.addListener('click', function(e) {
+        // clear the food input box if the user clicked on the map
+        // after clicking on a pre-existing pin that populated the food
+        // input box with text
+        if (selectedMarker) $('.foodInfo').val("");
+
+        // indicate that the last item to be selected
+        // is not a pre-existing pin, rather, just a temporary
+        // pin on the map while deciding where to place a foodshare
+        selectedMarker = null;
+
+        // hides the previously clicked marker as long as there
+        // wasn't a recently submitted foodshare. There would need
+        // to be a brand new pin added to the map.
         if(!submitClicked && !firstRun){
             prevMarker.setMap(null);
+            prevMarker = null;
             count--;
         }
         submitClicked = false;
         firstRun = false;
 
+        // get the position of the click
+        // and add a new pin theres
         latLng = e.latLng;
         var marker = addMarker(latLng, map, "");
-        console.log(marker.id);
-        console.log(marker.text);
-        $('#lat').text(latLng.lat());
-        $('#lng').text(latLng.lng());
+        pointerMarker = marker;
 
-        // selectedMarker = marker;
+        // update the previous marker pointer
         prevMarker = marker;
     });
 }
 
 // adds a new marker to the map
-function addMarker(latLng, map, text, key) {
+function addMarker(latLng, map, text, key, uidDB) {
     var marker = new google.maps.Marker({
         position: latLng,
         map: map,
         id: count,
         text: text,
-        key: key
+        key: key,
+        uid: uidDB
     });
-
-    // if(count) markers[count-1].key = key;
 
     count++;
     return marker;
 }
 
+foodshareRef.on('child_changed', function(data) {
+    selectedMarker.infoWindowRef.setContent(data.val().food);
+});
+
+//if a foodshare gets deleted from the firebase db
+foodshareRef.on('child_removed', function(data) {
+    for(marker in markers){
+        if(markers[marker].key == data.key){
+            markers[marker].setMap(null);
+            markers[marker] = null;
+            delete markers[marker];
+            break;
+        }
+    }
+});
+
 foodshareRef.on("child_added", function(data){
+    //get coordinates
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
-    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key);
+
+    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
     markers[count] = tempMarker;
 
@@ -74,8 +117,14 @@ foodshareRef.on("child_added", function(data){
     var infoWindow = new google.maps.InfoWindow({
         content: data.val().food
     });
+
+    //keep a reference of the marker's infowindow
+    tempMarker.infoWindowRef = infoWindow;
+
     // open the infowindow to the corresponding marker
     infoWindow.open(tempMarker.get('map'), tempMarker);
+
+    selectedMarker = tempMarker;
 
     tempMarker.addListener('click', function () {
         // var marker = this;
@@ -101,8 +150,6 @@ function hideIfOnPage(hideID) {
     }
     return false;
 }
-
-
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
@@ -146,14 +193,24 @@ $(document).ready(function() {
                 if (key - 1 == selectedMarker.id) {
                     selectedMarker.text = $('.foodInfo').val();
                     //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-                    foodshareRef.child(selectedMarker.key).set(
-                        {'food' : selectedMarker.text,'lat' : selectedMarker.position.lat(), 'lng' : selectedMarker.position.lng()}
-                    );
+                    foodshareRef.child(selectedMarker.key).set({
+                            'food': selectedMarker.text,
+                            'lat' : selectedMarker.position.lat(),
+                            'lng' : selectedMarker.position.lng(),
+                            'uid' : selectedMarker.uid
+                        });
                 }
             }
         }
         else{
-            foodshareRef.push({'food' : $('.foodInfo').val(),'lat' : latLng.lat(), 'lng' : latLng.lng()});
+            pointerMarker.setMap(null);
+            pointerMarker = null;
+            foodshareRef.push({
+                'food': $('.foodInfo').val(),
+                'lat' : latLng.lat(),
+                'lng' : latLng.lng(),
+                'uid' : uid
+            });
         }
 
         submitClicked = true;
@@ -161,28 +218,18 @@ $(document).ready(function() {
 
     $('.delFood').on('click', deleteMarker);
 
-    // // Sets the map on all markers in the array.
-    // function setMapOnAll(map) {
-    //     for (key in markers) {
-    //         markers[key].setMap(map);
-    //     }
-    // }
-
 });
 
 function deleteMarker (){
+    $('.foodInfo').val("");
+
     //delete the selectedMarker and redraw the map
-    for(key in markers){
-        if (key-1 == selectedMarker.id){
-            // setMapOnAll(null);
-            // setMapOnAll(map);
+    for(marker in markers){
+        if (marker-1 == selectedMarker.id){
             foodshareRef.child(selectedMarker.key).remove();
-            markers[key].setVisible(false);
-            // markers[key]
-            markers[key].setMap(null);
-            markers[key] = null;
-            delete markers[key];
-            google.maps.event.trigger(map, 'resize');
+            markers[marker].setMap(null);
+            markers[marker] = null;
+            delete markers[marker];
             break;
         }
     }
