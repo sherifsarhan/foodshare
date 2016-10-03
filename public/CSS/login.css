@@ -26,6 +26,85 @@ div.fixed_top_navbar{
 
 /*LOGIN STUFF*/
 
+/*BOOTSTRAP EDITS*/
+.jumbotron{
+  background-color:#67363F;
+}
+
+.whitetext{
+  color:white;
+}
+
+.redtext{
+  color: #CB1132;
+}
+
+.hidetext{
+  color: #67363F;
+}
+
+/*CUSTOM BUTTON LOGIN*/
+.btn-login {
+  color: #ffffff;
+  background-color: #D67486;
+  border-color: #E06C81;
+}
+
+.btn-login:hover, .btn-login:focus, .btn-login:active, .btn-login.active, .open .dropdown-toggle.btn-login {
+  color: #ffffff;
+  background-color: #D15E73;
+  border-color: #E06C81;
+}
+
+.btn-login:active, .btn-login.active, .open .dropdown-toggle.btn-login {
+  background-color: #CF5369;
+  background-image: none;
+}
+
+.btn-login.disabled, .btn-login[disabled], fieldset[disabled] .btn-login, .btn-login.disabled:hover, .btn-login[disabled]:hover,
+fieldset[disabled] .btn-login:hover, .btn-login.disabled:focus, .btn-login[disabled]:focus, fieldset[disabled] .btn-login:focus,
+.btn-login.disabled:active, .btn-login[disabled]:active, fieldset[disabled] .btn-login:active, .btn-login.disabled.active,
+.btn-login[disabled].active, fieldset[disabled] .btn-login.active {
+  background-color: #D67486;
+  border-color: #E06C81;
+}
+
+.btn-login .badge {
+  color: #D67486;
+  background-color: #ffffff;
+}
+
+/*CUSTOM BUTTON ERROR MESSAGE*/
+.btn-error {
+  color: #ffffff;
+  background-color: #D9534F;
+  border-color: #D9534F;
+}
+
+.btn-error:hover, .btn-error:focus, .btn-error:active, .btn-error.active, .open .dropdown-toggle.btn-error {
+  color: #ffffff;
+  background-color: #D9534F;
+  border-color: #D9534F;
+}
+
+.btn-error:active, .btn-error.active, .open .dropdown-toggle.btn-error {
+  background-color: #D9534F;
+  background-image: none;
+}
+
+.btn-error.disabled, .btn-error[disabled], fieldset[disabled] .btn-error, .btn-error.disabled:hover, .btn-error[disabled]:hover,
+fieldset[disabled] .btn-error:hover, .btn-error.disabled:focus, .btn-error[disabled]:focus, fieldset[disabled] .btn-error:focus,
+.btn-error.disabled:active, .btn-error[disabled]:active, fieldset[disabled] .btn-error:active, .btn-error.disabled.active,
+.btn-error[disabled].active, fieldset[disabled] .btn-error.active {
+  background-color: #D9534F;
+  border-color: #D9534F;
+}
+
+.btn-error .badge {
+  color: #D9534F;
+  background-color: #ffffff;
+}
+
 /* Full-width input fields */
 input[type=text], input[type=password] {
     width: 100%;

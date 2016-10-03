@@ -27,68 +27,55 @@ function hideIfOnPage(hideID) {
 //-------------DOCUMENT READY----------------
 $( document ).ready(function() {
 
+  $("#ermnouser").hide();
+  $("#ermpass").hide();
+  $("#erminuse").hide();
+
+  $("#pword").blur(function() {
+    if(!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test($("#pword").val()))){
+      alert("The password must be at least 6 characters long and contain at least 1 number.");
+      this.focus();
+    }
+  });
+
+
   $("#loginbtn").click(function() {
     firebase.auth().signInWithEmailAndPassword($("#uname").val(), $("#pword").val())
         .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-            console.log(errorCode);
-            console.log(errorMessage);
+          //Use error.code to get the type of error.
+          if(error.code == "auth/wrong-password"){
+            $("#ermnouser").hide();
+            $("#ermpass").show();
+            $("#erminuse").hide();
+          }
+          else{
+            if(error.code == "auth/user-not-found"){
+              $("#ermnouser").show();
+              $("#ermpass").hide();
+              $("#erminuse").hide();
+            }
+          }
+
         })
         .then(function(authData) {
-            document.getElementById('id01').style.display='none';
 
         });
   });
 
   $("#regbtn").click(function() {
-    firebase.auth().createUserWithEmailAndPassword($("#unamer").val(), $("#pwordr").val())
+    firebase.auth().createUserWithEmailAndPassword($("#uname").val(), $("#pword").val())
         .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
+          //Use error.code to get the type of error.
+          if(error.code == "auth/email-already-in-use"){
+            $("#ermnouser").hide();
+            $("#ermpass").hide();
+            $("#erminuse").show();
+          }
+
         })
         .then(function(authData) {
-            document.getElementById('id02').style.display='none';
+
         });
-  });
-
-
-
-  //For the LOGIN FORM AND FOR HISTORY MANIPULATION
-// Get the modal
-  var modal = document.getElementById('id01');
-
-// When the user clicks anywhere outside of the modal, close it
-  document.onclick = function(event) {
-    //have the state ready for when the user wants to click back
-    history.pushState(null, null, "login.html");
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  };
-
-  window.addEventListener('popstate', function(e) {
-    document.getElementById('id01').style.display = "none";
-  });
-
-  // Get the modal
-  var modal2 = document.getElementById('id02');
-
-// When the user clicks anywhere outside of the modal, close it
-  document.onclick = function(event) {
-    //have the state ready for when the user wants to click back
-    history.pushState(null, null, "login.html");
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  };
-
-  window.addEventListener('popstate', function(e) {
-    document.getElementById('id02').style.display = "none";
   });
 
 });
