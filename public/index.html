@@ -7,69 +7,79 @@ simple table of recent foodshares-->
 <html lang="en">
 <head>
 
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 
-    <title>Food Share</title>
-    <meta name="description" content="Food Share">
+  <title>Food Share</title>
+  <meta name="description" content="Food Share">
 
-    <script src="https://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="JS/index.js"></script>
 
-    <link rel="stylesheet" href="CSS/index.css?v=1.0">
-    <script type="text/javascript" src="JS/index.js"></script>
+  <link rel="stylesheet" href="CSS/bootstrap.min.css">
+  <link rel="stylesheet" href="CSS/index.css?v=1.0">
+
+
 
 </head>
 
-<body>
-    <div class="fixed_top_navbar">
-        <a class="link" href="index.html">Main</a>
-        <a class="link" href="login.html">Login</a>
-        <a class="link" href="map.html">Map</a>
+<body background="EXTRAS/6942095-abstract-background-wallpaper.jpg">
+
+    <div class="container">
+
+      <nav class="navbar navbar-light bg-faded">
+        <ul class="nav navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link whitetext" href="login.html">Login <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link whitetext" href="">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link whitetext" href="map.html">Map</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link whitetext" href="#">Visualization (beta)</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="page-header whitetext">
+        <h3>
+          FOOD SHARE
+        </h3>
+      </div>
+
+      <table>
+          <caption><b>Recent Foodshares</b></caption>
+          <tr>
+              <th>Food</th>
+              <th>Location</th>
+              <th>User</th>
+          </tr>
+          <tr>
+              <td>Chicken noodle soup</td>
+              <td>GMU JC, Second Floor</td>
+              <td>mboudrig2</td>
+          </tr>
+          <tr>
+              <td>half a subconnection sandwich</td>
+              <td>Robinson Hall B, 1103</td>
+              <td>ssarhan3</td>
+          </tr>
+      </table>
+
+      <!--New dynamic views-->
+      <div id="allViews"> </div>
+
+      <div class="view hide" id="page1">
+          <p>We are Sherif and Marwane, CS students at George Mason University. Aspiring developers.</p>
+      </div>
+
+      <div class="view hide" id="page2">
+          <p>notmine@emailstuff</p>
+      </div>
+
     </div>
-
-    <script type="text/javascript" src="JS/index.js"></script>
-
-    <br><br>
-    <img class="flagpic" src="EXTRAS/ArcGIS%20Picture.png">
-    <br>
-
-    <table>
-        <caption><b>Recent Foodshares</b></caption>
-        <tr>
-            <th>Food</th>
-            <th>Location</th>
-            <th>User</th>
-        </tr>
-        <tr>
-            <td>Chicken noodle soup</td>
-            <td>GMU JC, Second Floor</td>
-            <td>mboudrig2</td>
-        </tr>
-        <tr>
-            <td>half a subconnection sandwich</td>
-            <td>Robinson Hall B, 1103</td>
-            <td>ssarhan3</td>
-        </tr>
-    </table>
-
-    <!--New dynamic views-->
-    <div id="allViews"> </div>
-
-    <div class="view hide" id="page1">
-        <p>We are Sherif and Marwane, CS students at George Mason University. Aspiring developers.</p>
-    </div>
-
-    <div class="view hide" id="page2">
-        <p>notmine@emailstuff</p>
-    </div>
-
-    <div class="view hide" id="page3">
-        <p>Please donate your time to our project after the semester is over. github.com/sherifsarhan</p>
-    </div>
-
-    <button id="showPage1Btn" data-launch-view="page1">About us</button>
-    <button id="showPage2Btn" data-launch-view="page2">Contact</button>
-    <button id="showPage3Btn" data-launch-view="page3">Donate</button>
-
 </body>
 
 </html>
