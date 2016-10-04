@@ -12,4 +12,4 @@ Total Scenarios:
 Implemented Scenarios:
 1)Register
 2)Login
-3)Post foodshare
+3)Post/read/delete/update foodshare
