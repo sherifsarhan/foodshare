@@ -24,6 +24,20 @@ function hideIfOnPage(hideID) {
   return false;
 }
 
+var uid = "test";
+//get user info if they're signed in
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        uid = user.uid;
+    } else {
+        // No user is signed in.
+    }
+});
+
+function getUid(){
+    return uid;
+}
 //-------------DOCUMENT READY----------------
 $( document ).ready(function() {
 
