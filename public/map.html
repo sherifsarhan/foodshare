@@ -14,8 +14,17 @@ will record this data.-->
   <meta name="description" content="Food Share - Map">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+  <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
+
+  <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+  <script src="https://unpkg.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
   <script src="https://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+
+  <script type="text/babel" src="JS/map-react.js"></script>
+
   <script src="JS/map.js" type="text/javascript"></script>
   <script src="JS/bootstrap.min.js"></script>
 
@@ -71,23 +80,20 @@ will record this data.-->
       <div id="map"></div>
     </div>
 
-    <div class="col-lg-4">
-      <div class="jumbotron">
-        <div id="infoDiv">
-            <input class="foodInfo" type="text" size="27.5" placeholder="Enter food info" required>
-            <button class="sbmtFood btn btn-block btn-warning">Submit</button>
-            <button class="delFood btn btn-block btn-login">Delete</button>
-        </div>
-      </div>
-    </div>
+    <!--<div class="col-lg-4">-->
+      <!--<div class="jumbotron">-->
+        <!--<div id="infoDiv">-->
+            <!--<input class="foodInfo" type="text" size="27.5" placeholder="Enter food info" required>-->
+            <!--<button class="sbmtFood btn btn-block btn-warning">Submit</button>-->
+            <!--<button class="delFood btn btn-block btn-login">Delete</button>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
 
     <div class="col-lg-4">
       <div class="jumbotron">
         <p class="whitetext"><u>Food Shares of Current Session:</u></p>
-        <p class="whitetext">- Sample Hardcoded 1</p>
-        <p class="whitetext">- Sample Hardcoded 2</p>
-        <p class="whitetext">- Sample Hardcoded 3</p>
-        <p class="whitetext">- Sample Hardcoded 4</p>
+        <div id="list-container"></div>
       </div>
     </div>
 

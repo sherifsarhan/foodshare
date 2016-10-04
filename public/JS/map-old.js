@@ -22,7 +22,6 @@ firebase.auth().onAuthStateChanged(function(user) {
     }
 });
 
-var foodList;
 var selectedMarker;
 var submitClicked = false;
 var latLng;
@@ -30,7 +29,6 @@ var markers = {};
 var map;
 var count=0;
 var pointerMarker;
-var defaultIcon;
 //--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
@@ -47,10 +45,7 @@ function initMap() {
         // clear the food input box if the user clicked on the map
         // after clicking on a pre-existing pin that populated the food
         // input box with text
-        if (selectedMarker){
-            // $('.foodInfo').val("");
-            foodList.updateInput("");
-        }
+        if (selectedMarker) $('.foodInfo').val("");
 
         // indicate that the last item to be selected
         // is not a pre-existing pin, rather, just a temporary
@@ -73,7 +68,6 @@ function initMap() {
         latLng = e.latLng;
         var marker = addMarker(latLng, map, "");
         pointerMarker = marker;
-        if(firstRun) defaultIcon = pointerMarker.icon;
 
         // update the previous marker pointer
         prevMarker = marker;
@@ -135,113 +129,109 @@ foodshareRef.on("child_added", function(data){
     tempMarker.addListener('click', function () {
         // var marker = this;
         LatLng = tempMarker.position;
-        // $('#lat').text(LatLng.lat());
-        // $('#lng').text(LatLng.lng());
-        // $('.foodInfo').val(data.val().food);
-        foodList.updateInput(data.val().food);
-
+        $('#lat').text(LatLng.lat());
+        $('#lng').text(LatLng.lng());
+        $('.foodInfo').val(data.val().food);
         infoWindow.open(tempMarker.get('map'), tempMarker);
         selectedMarker = tempMarker;
+        console.log(tempMarker.id);
     });
 
-    foodList.updateInput(data.val().food);
-    foodList.handleAddHelper();
-    // $('.delFood').on('click', deleteMarker);
+    $('.delFood').on('click', deleteMarker);
 });
 
 //--------------JS FUNCTIONS-----------------
 
-// //Takes an ID, hides it if its currently on the page, returns bool on what happened.
-// function hideIfOnPage(hideID) {
-//     if ($(hideID).length){
-//         ($(hideID)).hide();
-//         return true;
-//     }
-//     return false;
-// }
+//Takes an ID, hides it if its currently on the page, returns bool on what happened.
+function hideIfOnPage(hideID) {
+    if ($(hideID).length){
+        ($(hideID)).hide();
+        return true;
+    }
+    return false;
+}
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
-    // //Initially hides the elements which will be toggled by the select
-    // hideIfOnPage("#location");
-    // hideIfOnPage("#quantity");
-    // hideIfOnPage("#foodtype");
-    //
-    // //when the select changes display the desired div and hide any that are currently showing.
-    // $("#mapselect").change(function() {
-    //     var currentlySelected = $('#mapselect').find(":selected").text();
-    //     if (currentlySelected == "Food Type"){
-    //         hideIfOnPage("#location");
-    //         hideIfOnPage("#quantity");
-    //         var foodtype = $("#foodtype");
-    //         foodtype.show();
-    //         console.log(foodtype.data("food-id"));
-    //     }
-    //     else{
-    //         if (currentlySelected == "Location"){
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#quantity");
-    //             var location = $("#location");
-    //             location.show();
-    //             console.log(location.data("loc-id"));
-    //         }
-    //         else{
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#location");
-    //             var quantity = $("#quantity");
-    //             quantity.show();
-    //             console.log(quantity.data("quan-id"));
-    //         }
-    //     }
-    // });
+    //Initially hides the elements which will be toggled by the select
+    hideIfOnPage("#location");
+    hideIfOnPage("#quantity");
+    hideIfOnPage("#foodtype");
+
+    //when the select changes display the desired div and hide any that are currently showing.
+    $("#mapselect").change(function() {
+        var currentlySelected = $('#mapselect').find(":selected").text();
+        if (currentlySelected == "Food Type"){
+            hideIfOnPage("#location");
+            hideIfOnPage("#quantity");
+            var foodtype = $("#foodtype");
+            foodtype.show();
+            console.log(foodtype.data("food-id"));
+        }
+        else{
+            if (currentlySelected == "Location"){
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#quantity");
+                var location = $("#location");
+                location.show();
+                console.log(location.data("loc-id"));
+            }
+            else{
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#location");
+                var quantity = $("#quantity");
+                quantity.show();
+                console.log(quantity.data("quan-id"));
+            }
+        }
+    });
+
+    $('.sbmtFood').on('click', function () {
+        //if we are updating the text of a selected marker
+        if (selectedMarker){
+            for(key in markers) {
+                if (key - 1 == selectedMarker.id) {
+                    selectedMarker.text = $('.foodInfo').val();
+                    //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
+                    foodshareRef.child(selectedMarker.key).set({
+                            'food': selectedMarker.text,
+                            'lat' : selectedMarker.position.lat(),
+                            'lng' : selectedMarker.position.lng(),
+                            'uid' : selectedMarker.uid
+                        });
+                }
+            }
+        }
+        else{
+            pointerMarker.setMap(null);
+            pointerMarker = null;
+            foodshareRef.push({
+                'food': $('.foodInfo').val(),
+                'lat' : latLng.lat(),
+                'lng' : latLng.lng(),
+                'uid' : uid
+            });
+        }
+
+        submitClicked = true;
+    });
+
+    $('.delFood').on('click', deleteMarker);
+
 });
 
 function deleteMarker (){
-    // $('.foodInfo').val("");
+    $('.foodInfo').val("");
 
     //delete the selectedMarker and redraw the map
     for(marker in markers){
         if (marker-1 == selectedMarker.id){
             foodshareRef.child(selectedMarker.key).remove();
-            return selectedMarker.text;
+            markers[marker].setMap(null);
+            markers[marker] = null;
+            delete markers[marker];
+            break;
         }
     }
-    foodList.updateInput("");
 }
 
-
-//---------functions to be used by react visuals-----
-function addUpdateMarker(text) {
-    var markerText = text;
-
-    //if we are updating the text of a selected marker
-    if (selectedMarker){
-        for(key in markers) {
-            if (key - 1 == selectedMarker.id) {
-                selectedMarker.text = markerText;
-                //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-                foodshareRef.child(selectedMarker.key).set({
-                    'food': selectedMarker.text,
-                    'lat' : selectedMarker.position.lat(),
-                    'lng' : selectedMarker.position.lng(),
-                    'uid' : selectedMarker.uid
-                });
-            }
-        }
-    }
-    else if(pointerMarker != null) {
-        pointerMarker.setMap(null);
-        pointerMarker = null;
-        foodshareRef.push({
-            'food': markerText,
-            'lat' : latLng.lat(),
-            'lng' : latLng.lng(),
-            'uid' : uid
-        });
-    }
-    submitClicked = true;
-}
-
-function getFoodList(render){
-    foodList = render;
-}
