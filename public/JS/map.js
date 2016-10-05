@@ -190,6 +190,7 @@ $(document).ready(function() {
 
 function deleteMarker (){
     // $('.foodInfo').val("");
+    foodList.updateInput("");
 
     //delete the selectedMarker and redraw the map
     for(marker in markers){
@@ -198,7 +199,6 @@ function deleteMarker (){
             return selectedMarker.text;
         }
     }
-    foodList.updateInput("");
 }
 
 
