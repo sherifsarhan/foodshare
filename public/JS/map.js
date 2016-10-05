@@ -73,7 +73,6 @@ function initMap() {
         latLng = e.latLng;
         var marker = addMarker(latLng, map, "");
         pointerMarker = marker;
-        if(firstRun) defaultIcon = pointerMarker.icon;
 
         // update the previous marker pointer
         prevMarker = marker;
@@ -135,18 +134,11 @@ foodshareRef.on("child_added", function(data){
     tempMarker.addListener('click', function () {
         // var marker = this;
         LatLng = tempMarker.position;
-        // $('#lat').text(LatLng.lat());
-        // $('#lng').text(LatLng.lng());
-        // $('.foodInfo').val(data.val().food);
         foodList.updateInput(data.val().food);
 
         infoWindow.open(tempMarker.get('map'), tempMarker);
         selectedMarker = tempMarker;
     });
-
-    foodList.updateInput(data.val().food);
-    foodList.handleAddHelper();
-    // $('.delFood').on('click', deleteMarker);
 });
 
 //--------------JS FUNCTIONS-----------------
@@ -226,19 +218,21 @@ function addUpdateMarker(text) {
                     'lng' : selectedMarker.position.lng(),
                     'uid' : selectedMarker.uid
                 });
+                return;
             }
         }
     }
     else if(pointerMarker != null) {
         pointerMarker.setMap(null);
         pointerMarker = null;
-        foodshareRef.push({
-            'food': markerText,
-            'lat' : latLng.lat(),
-            'lng' : latLng.lng(),
-            'uid' : uid
-        });
+        selectedMarker = null;
     }
+    foodshareRef.push({
+        'food': markerText,
+        'lat' : latLng.lat(),
+        'lng' : latLng.lng(),
+        'uid' : uid
+    });
     submitClicked = true;
 }
 
