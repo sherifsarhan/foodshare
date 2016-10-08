@@ -143,49 +143,49 @@ foodshareRef.on("child_added", function(data){
 
 //--------------JS FUNCTIONS-----------------
 
-// //Takes an ID, hides it if its currently on the page, returns bool on what happened.
-// function hideIfOnPage(hideID) {
-//     if ($(hideID).length){
-//         ($(hideID)).hide();
-//         return true;
-//     }
-//     return false;
-// }
+//Takes an ID, hides it if its currently on the page, returns bool on what happened.
+function hideIfOnPage(hideID) {
+    if ($(hideID).length){
+        ($(hideID)).hide();
+        return true;
+    }
+    return false;
+}
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
-    // //Initially hides the elements which will be toggled by the select
-    // hideIfOnPage("#location");
-    // hideIfOnPage("#quantity");
-    // hideIfOnPage("#foodtype");
-    //
-    // //when the select changes display the desired div and hide any that are currently showing.
-    // $("#mapselect").change(function() {
-    //     var currentlySelected = $('#mapselect').find(":selected").text();
-    //     if (currentlySelected == "Food Type"){
-    //         hideIfOnPage("#location");
-    //         hideIfOnPage("#quantity");
-    //         var foodtype = $("#foodtype");
-    //         foodtype.show();
-    //         console.log(foodtype.data("food-id"));
-    //     }
-    //     else{
-    //         if (currentlySelected == "Location"){
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#quantity");
-    //             var location = $("#location");
-    //             location.show();
-    //             console.log(location.data("loc-id"));
-    //         }
-    //         else{
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#location");
-    //             var quantity = $("#quantity");
-    //             quantity.show();
-    //             console.log(quantity.data("quan-id"));
-    //         }
-    //     }
-    // });
+    //Initially hides the elements which will be toggled by the select
+    hideIfOnPage("#location");
+    hideIfOnPage("#quantity");
+    hideIfOnPage("#foodtype");
+
+    //when the select changes display the desired div and hide any that are currently showing.
+    $("#mapselect").change(function() {
+        var currentlySelected = $('#mapselect').find(":selected").text();
+        if (currentlySelected == "Food Type"){
+            hideIfOnPage("#location");
+            hideIfOnPage("#quantity");
+            var foodtype = $("#foodtype");
+            foodtype.show();
+            console.log(foodtype.data("food-id"));
+        }
+        else{
+            if (currentlySelected == "Location"){
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#quantity");
+                var location = $("#location");
+                location.show();
+                console.log(location.data("loc-id"));
+            }
+            else{
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#location");
+                var quantity = $("#quantity");
+                quantity.show();
+                console.log(quantity.data("quan-id"));
+            }
+        }
+    });
 });
 
 function deleteMarker (){

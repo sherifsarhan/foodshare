@@ -1,6 +1,3 @@
-//-------------------------------------------------------------------
-
-
 var TodoList = React.createClass({
     render: function() {
         var createItem = function(item) {
