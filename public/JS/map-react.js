@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {Button, Input} from 'react-materialize'
 
 var TodoList = React.createClass({
     render: function() {
@@ -46,9 +47,9 @@ var TodoApp = React.createClass({
             <div>
             <TodoList items={this.state.items} />
         <form onSubmit={this.submission}>
-        <input placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
-        <button type="button" onClick={this.handleAdd}>{'Add #' + (this.state.items.length + 1)}</button>
-            <button type="button" onClick={this.handleDelete}>{"Delete"}</button>
+        <Input placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
+        <Button type="button" onClick={this.handleAdd}>Add</Button>
+            <Button type="button" onClick={this.handleDelete}>{"Delete"}</Button>
         </form>
         </div>
         );

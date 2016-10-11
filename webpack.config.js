@@ -8,7 +8,7 @@ var path = require('path');
 module.exports = {
     context: path.join(__dirname, "public"),
     devtool: debug ? "inline-sourcemap" : null,
-    entry: "./JS/login-react.js",
+    entry: "./JS/map-react.js",
     module: {
         loaders: [
             {
@@ -24,7 +24,7 @@ module.exports = {
     },
     output: {
         path: __dirname + "/public/JS",
-        filename: "login-react.min.js"
+        filename: "map-react.min.js"
     },
     plugins: debug ? [] : [
         new webpack.optimize.DedupePlugin(),

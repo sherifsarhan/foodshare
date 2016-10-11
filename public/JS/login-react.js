@@ -4,7 +4,7 @@
 // import SkyLight from 'react-skylight'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Modal, Button, Input, Row, CardPanel, Col} from 'react-materialize'
+import {Modal, Button, Input, Row} from 'react-materialize'
 
 
 //---------------------------------------------------------------------
@@ -188,12 +188,6 @@ class NavBar extends React.Component{
                         </li>
                     </ul>
                 </nav>
-
-                <div className="page-header whitetext">
-                    <h3>
-                        FOOD SHARE
-                    </h3>
-                </div>
             </div>
         );
     }
