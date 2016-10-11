@@ -1,34 +1,22 @@
 /**
  * Created by Sherif on 10/4/2016.
  */
-//Display that a user is logged in
-// class Username extends React.Component{
-//     render() {
-//         var {username, age} = this.props;
-//         return(
-//             <div>
-//                 <h1>{username}</h1>
-//                 <h2>{age}</h2>
-//             </div>
-//         )
-//     }
-// }
+// import SkyLight from 'react-skylight'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {Modal, Button, Input, Row, CardPanel, Col} from 'react-materialize'
+
+
+//---------------------------------------------------------------------
+// var config = {
+//     apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
+//     authDomain: "foodshare-1474316972332.firebaseapp.com",
+//     databaseURL: "https://foodshare-1474316972332.firebaseio.com",
+//     storageBucket: "foodshare-1474316972332.appspot.com",
+//     messagingSenderId: "151948214475"
+// };
 //
-// ReactDOM.render(
-//     <Username username="sherif" age={52}/>,
-//     document.getElementById('login')
-// );
-
-
-var config = {
-    apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
-    authDomain: "foodshare-1474316972332.firebaseapp.com",
-    databaseURL: "https://foodshare-1474316972332.firebaseio.com",
-    storageBucket: "foodshare-1474316972332.appspot.com",
-    messagingSenderId: "151948214475"
-};
-
-firebase.initializeApp(config);
+// firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
 
@@ -43,91 +31,235 @@ firebase.auth().onAuthStateChanged(function(user) {
     }
 });
 
-class LoginBox extends React.Component{
-    constructor(props) {
+class NavBar extends React.Component{
+    constructor(props){
         super(props);
-        this.state = {email: "", password: "", error: "", showError: false, success: "", showSuccess: false};
+        this.state = {email: "", password: "", showError: false, error: "",
+            success: "", showSuccess: false, showLoginBox: true,
+            loginState: false, currentUser: ""};
+
+        this.loginHandler = this.loginHandler.bind(this);
+        this.registerHandler = this.registerHandler.bind(this);
+
+        this.onEmailChange = this.onEmailChange.bind(this);
+        this.onPasswordChange = this.onPasswordChange.bind(this);
+
+        this.handleLogout = this.handleLogout.bind(this);
+
+        this.hideError = this.hideError.bind(this);
+        this.hideSuccess = this.hideSuccess.bind(this);
     }
 
-    loginAction() {
+    setDefaultState(){
+        this.state = {
+            email: "", password: "", showError: false, error: "",
+            success: "", showSuccess: false, showLoginBox: true,
+            loginState: false, currentUser: ""};
+    };
+
+    onEmailChange(value){
+        this.setState({email: value});
+    }
+
+    onPasswordChange(value){
+        this.setState({password: value});
+    }
+
+    loginHandler(e) {
         var stateObj = this;
         var success = true;
-        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+        firebase.auth().signInWithEmailAndPassword(stateObj.state.email, stateObj.state.password)
             .catch(function(error) {
                 success = false;
                 //Use error.code to get the type of error.
                 if(error.code == "auth/wrong-password"){
-                    stateObj.setState({error: "The password is invalid or the user does not have a password.",
-                     showError: true});
+                    stateObj.setState({error: " Invalid password. Please try again.",
+                        showError: true});
                 }
                 else if(error.code == "auth/user-not-found"){
-                    stateObj.setState({error: "There is no record corresponding to this identifier. The user may have been deleted.",
+                    stateObj.setState({error: " This email has not yet been registered",
                         showError: true});
                 }
             })
             .then(function(authData) {
                 if(success) {
                     console.log("SUCCESS LOGIN");
-                    stateObj.setState({showError: false, success: "Signed in!", showSuccess: true});
+                    stateObj.setState({showError: false, success: " Signed in!", showSuccess: true});
+
+                    // need to keep track that user is logged in
+                    // and also Hide the login box
+                    $('#modal1').closeModal();
+                    stateObj.setState({loginState: true, showLoginBox: false, currentUser: stateObj.state.email});
                 }
             });
     }
 
-    registerAction() {
+    registerHandler(e) {
         var stateObj = this;
         var success = true;
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+        firebase.auth().createUserWithEmailAndPassword(stateObj.state.email, stateObj.state.password)
             .catch(function(error) {
                 success = false;
                 //Use error.code to get the type of error.
                 if(error.code == "auth/email-already-in-use"){
-                    stateObj.setState({error: "The email address is already in use by another account.", showError: true});
+                    stateObj.setState({error: " This email is already in use.", showError: true});
                 }
             })
             .then(function(authData) {
                 if(success) {
                     console.log("SUCCESS REGISTER");
-                    stateObj.setState({showError: false, success: "Registered!", showSuccess: true});
+                    stateObj.setState({showError: false, success: " Registered! Please check your e-mail to verify" +
+                    " your account.", showSuccess: true});
+
+                    //send verification email
+                    firebase.auth().currentUser.sendEmailVerification().then(function() {
+                        //email sent
+                    }, function(error) {
+                        //an error occurred
+                    });
+
+                    // //    1. Reset the states to be blank
+                    // stateObj.setDefaultState();
+                    // //    2. Hide the login box
+                    // stateObj.setState({showLoginBox: false})
                 }
             });
     }
 
-    onEmailChange(e) {
-        this.setState({email: e.target.value});
+    handleLogout(e){
+        var stateObj = this;
+        firebase.auth().signOut().then(function() {
+            console.log("logout success");
+            // Reset the login box to default
+            stateObj.setDefaultState();
+            //for some reason I need to set the login state to false
+            //even though setDefaultState() already does it.
+            //loginbox won't show otherwise
+            stateObj.setState({loginState: false});
+        }, function(error) {
+            console.log("error");
+        });
     }
-    onPasswordChange(e) {
-        this.setState({password: e.target.value});
+
+    hideError(){
+        this.setState({showError: false});
+    }
+    hideSuccess(){
+        this.setState({showSuccess: false});
     }
 
     render() {
         return(
-            <div className="container">
-                <div className="col-lg-8">
-                    <div className="jumbotron">
-                        <label className="whitetext"><b>Email</b></label>
-                        <input value={this.state.email} onChange={this.onEmailChange.bind(this)} id="uname" type="text" placeholder="Enter Email"></input>
+            <div>
+                <nav className="navbar navbar-light bg-faded">
+                    <ul className="nav navbar-nav">
+                        <li className="nav-item active">
+                            {this.state.loginState ?
+                                <a className="nav-link whitetext" onClick={this.handleLogout}>
+                                    {this.state.currentUser} (Logout)
+                                </a>
+                            :
+                                //<a className="nav-link whitetext" onClick={() => this.refs.simpleDialog.show()}>
+                                <Modal id="modal1"
+                                    modalOptions={{test:67,age:50}}
+                                header='Login and Registration'
+                                trigger={
+                                <Button waves='light'>Login and Registration</Button>
+                                }>
+                                <LoginBox loginHandler = {this.loginHandler} registerHandler = {this.registerHandler}
+                                          email={this.state.email} onEmailChange={this.onEmailChange}
+                                          password={this.state.password} onPasswordChange={this.onPasswordChange}
+                                          showError={this.state.showError} error={this.state.error}
+                                          showSuccess={this.state.showSuccess}
+                                          showLoginBox={this.state.showLoginBox}
+                                          success={this.state.success}
+                                          hideError={this.hideError}
+                                          hideSuccess={this.hideSuccess}>
+                                </LoginBox>
+                                </Modal>
+                            }
 
-                        <label className="whitetext"><b>Password</b></label>
-                        <input value={this.state.password} onChange={this.onPasswordChange.bind(this)}id="pword" type="password" placeholder="Enter Password"></input>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link whitetext" href="index.html">About</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link whitetext" href="#">Visualization (beta)</a>
+                        </li>
+                    </ul>
+                </nav>
 
-                        { this.state.showError ?
-                            <a className="btn btn-block btn-error"><span className="glyphicon glyphicon-minus-sign"></span>{this.state.error}</a> : null}
-                        { this.state.showSuccess ?
-                            <a className="btn btn-block btn-success"><span className="glyphicon glyphicon-plus-sign"></span>{this.state.success}</a> : null}
-
-
-                        <button onClick={this.loginAction.bind(this)} type="button" id="loginbtn" className="col-lg-6 col-md-6 col-sm-6 btn btn-login">LOGIN</button>
-                        <button onClick={this.registerAction.bind(this)} type="button" id="regbtn" className="col-lg-6 col-md-6 col-sm-6 btn btn-warning">REGISTER</button>
-                        <p><br></br></p>
-                    </div>
+                <div className="page-header whitetext">
+                    <h3>
+                        FOOD SHARE
+                    </h3>
                 </div>
             </div>
         );
     }
 }
 
+
+class LoginBox extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {email: "", password: "", showError: false, error: "",
+            success: "", showSuccess: false, showLoginBox: true,
+            loginState: false, currentUser: ""};
+    };
+
+    handleOnEmailChange(e){
+        this.props.onEmailChange(e.target.value);
+    }
+    handleOnPasswordChange(e){
+        this.props.onPasswordChange(e.target.value);
+    }
+
+    onHideError(e){
+        e.preventDefault();
+        this.props.hideError();
+    }
+    onHideSuccess(e){
+        e.preventDefault();
+        this.props.hideSuccess();
+    }
+
+    onLoginHandler(e){
+        this.props.loginHandler(e);
+    }
+
+    render() {
+        return(
+            <Row>
+                <form className="col s12">
+                    <Row>
+                        {/*<Input placeholder="Placeholder" s={6} label="First Name" />*/}
+                        {/*<Input s={6} label="Last Name" />*/}
+                        <Input onChange={this.handleOnEmailChange.bind(this)} type="email" label="Email" s={12} />
+                        <Input onChange={this.handleOnPasswordChange.bind(this)} type="password" label="password" s={12} />
+                    </Row>
+                    <Row>
+                        { this.props.showError ?
+                            <Button onClick={this.onHideError.bind(this)} className="red col s12">{this.props.error}</Button>
+                            : null}
+                        { this.props.showSuccess ?
+                            <Button onClick={this.onHideSuccess.bind(this)} className="green col s12">{this.props.success}</Button>
+                            : null}
+                    </Row>
+                    <Row>
+                        <Button className="col s12 cyan lighten-2" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>
+                    </Row>
+                    <Row>
+                        <Button className="col s12 orange accent-4" onClick={this.props.registerHandler.bind(this)} type="button">REGISTER</Button>
+                    </Row>
+                </form>
+            </Row>
+        );
+    }
+}
+
 ReactDOM.render(
-    <LoginBox/>,
+    <NavBar/>,
     document.getElementById('login')
 );
 
