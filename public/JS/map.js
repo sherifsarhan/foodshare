@@ -49,7 +49,7 @@ function initMap() {
         // input box with text
         if (selectedMarker){
             // $('.foodInfo').val("");
-            foodList.updateInput("");
+            foodList.updateInput("","");
         }
 
         // indicate that the last item to be selected
@@ -110,11 +110,19 @@ foodshareRef.on('child_removed', function(data) {
     }
 });
 
+var tags = {};
 foodshareRef.on("child_added", function(data){
     //get coordinates
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
 
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
+
+    if(tags.hasOwnProperty(data.val().tag)){
+        tags[data.val().tag]++;
+    }
+    else{
+        tags[data.val().tag] = 1;
+    }
 
     markers[count] = tempMarker;
 
@@ -134,7 +142,7 @@ foodshareRef.on("child_added", function(data){
     tempMarker.addListener('click', function () {
         // var marker = this;
         LatLng = tempMarker.position;
-        foodList.updateInput(data.val().food);
+        foodList.updateInput(data.val().food, data.val().tag);
 
         infoWindow.open(tempMarker.get('map'), tempMarker);
         selectedMarker = tempMarker;
@@ -190,7 +198,7 @@ $(document).ready(function() {
 
 function deleteMarker (){
     // $('.foodInfo').val("");
-    foodList.updateInput("");
+    foodList.updateInput("", "");
 
     //delete the selectedMarker and redraw the map
     for(marker in markers){
@@ -203,7 +211,7 @@ function deleteMarker (){
 
 
 //---------functions to be used by react visuals-----
-function addUpdateMarker(text) {
+function addUpdateMarker(text, tag) {
     var markerText = text;
 
     //if we are updating the text of a selected marker
@@ -216,7 +224,8 @@ function addUpdateMarker(text) {
                     'food': selectedMarker.text,
                     'lat' : selectedMarker.position.lat(),
                     'lng' : selectedMarker.position.lng(),
-                    'uid' : selectedMarker.uid
+                    'uid' : selectedMarker.uid,
+                    'tag' : selectedMarker.tag
                 });
                 return;
             }
@@ -231,7 +240,8 @@ function addUpdateMarker(text) {
         'food': markerText,
         'lat' : latLng.lat(),
         'lng' : latLng.lng(),
-        'uid' : uid
+        'uid' : uid,
+        'tag' : tag
     });
     submitClicked = true;
 }

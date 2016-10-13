@@ -8,12 +8,16 @@ var path = require('path');
 module.exports = {
     context: path.join(__dirname, "public"),
     devtool: debug ? "inline-sourcemap" : null,
-    entry: "./JS/map-react.js",
+    // entry: "./JS/login-react.js",
+    entry: {
+        login: "./JS/login-react.js",
+        map: "./JS/map-react.js"
+    },
     module: {
         loaders: [
             {
-                test: /\.jsx?$/,
-                exclude: /(node_modules|bower_components)/,
+                test: /\.js?$/,
+                exclude: /node_modules/,
                 loader: 'babel-loader',
                 query: {
                     presets: ['react', 'es2015', 'stage-0'],
@@ -24,7 +28,7 @@ module.exports = {
     },
     output: {
         path: __dirname + "/public/JS",
-        filename: "map-react.min.js"
+        filename: "[name]-react.min.js"
     },
     plugins: debug ? [] : [
         new webpack.optimize.DedupePlugin(),

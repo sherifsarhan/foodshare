@@ -88,7 +88,10 @@ class NavBar extends React.Component{
 
                     // need to keep track that user is logged in
                     // and also Hide the login box
+                    console.log($('#modal1').html());
                     $('#modal1').closeModal();
+
+
                     stateObj.setState({loginState: true, showLoginBox: false, currentUser: stateObj.state.email});
                 }
             });
