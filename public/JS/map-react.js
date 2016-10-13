@@ -24,6 +24,11 @@ var FoodListApp = React.createClass({
         this.setState({tag: e.target.value});
     },
     handleAdd: function() {
+        console.log(checkLoggedIn());
+        if(!checkLoggedIn()){
+            alert("You must be signed in to add a FoodShare!");
+            return;
+        }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
         // itemsHash[count] = this.state.text;

@@ -17,6 +17,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         // User is signed in.
         uid = user.uid;
+        signedIn = true;
     } else {
         // No user is signed in.
     }
@@ -30,7 +31,6 @@ var markers = {};
 var map;
 var count=0;
 var pointerMarker;
-var defaultIcon;
 //--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
@@ -194,7 +194,6 @@ $(document).ready(function() {
             }
         }
     });
-
 });
 
 function deleteMarker (){
@@ -249,6 +248,20 @@ function addUpdateMarker(text, tag) {
 
 function getFoodList(render){
     foodList = render;
+}
+
+function checkLoggedIn(){
+    return uid;
+}
+
+function getVisualData(){
+    var tagsD3 = [];
+    for (tag in tags){
+        if (tags.hasOwnProperty(tag)){
+            tagsD3.push({val:tag, count:tags[tag]});
+        }
+    }
+    return tagsD3;
 }
 
 //VISUALIZATION STUFF

@@ -20,6 +20,7 @@ import {Modal, Button, Input, Row} from 'react-materialize'
 
 var foodshareRef = firebase.database().ref("foodshare");
 
+var signedIn = false;
 var uid = "test";
 //get user info if they're signed in
 firebase.auth().onAuthStateChanged(function(user) {
