@@ -130,6 +130,10 @@ foodshareRef.on("child_added", function(data){
 
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
+    if ($.trim(data.val().tag).length === 0){
+        // string is invalid
+        data.val().tag = "Unknown";
+    }
     if(tags.hasOwnProperty(data.val().tag)){
         tags[data.val().tag]++;
     }
