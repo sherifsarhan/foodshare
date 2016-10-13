@@ -10,10 +10,10 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
-var foodCountDB = 14;
-foodshareRef.once("value")
-    .then(function(snapshot) {
+var foodCountDB = 0;
+foodshareRef.on("value", function(snapshot) {
         foodCountDB = snapshot.numChildren(); // 1 ("name")
+        visualizeData();
     });
 
 var uid = "";
@@ -119,6 +119,10 @@ foodshareRef.on('child_removed', function(data) {
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
+
+    // foodCountDB = data.numChildren();
+    console.log(foodCountDB);
+
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
         data.val().tag = "Unknown";
