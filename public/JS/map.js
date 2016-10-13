@@ -10,6 +10,11 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
+var foodCountDB = 12;
+foodshareRef.once("value")
+    .then(function(snapshot) {
+        foodCountDB = snapshot.numChildren(); // 1 ("name")
+    });
 
 var uid = "";
 //get user info if they're signed in
@@ -109,17 +114,12 @@ foodshareRef.on('child_removed', function(data) {
         }
     }
 });
-//
 
 
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
-    var foodCountDB;
-    foodshareRef.once("value")
-        .then(function(snapshot) {
-            foodCountDB = snapshot.numChildren(); // 1 ("name")
-        });
+
     foodCount++;
     if(foodCount == foodCountDB){
         visualizeData();
@@ -310,7 +310,7 @@ function visualizeData(){
     }
     //initilizing pie chart through d3 built-ins and feed it some data
     var piechart = d3.layout.pie().value(function(dat) {return dat.count});
-    var vals = piechart(getVisualData());
+    var vals = piechart(tagsD3);
 
 //size of the pie chart
     var piesize = d3.svg.arc().innerRadius(50).outerRadius(100);
