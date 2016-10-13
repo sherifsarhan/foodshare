@@ -10,7 +10,7 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
-var foodCountDB = 12;
+var foodCountDB = 13;
 foodshareRef.once("value")
     .then(function(snapshot) {
         foodCountDB = snapshot.numChildren(); // 1 ("name")
@@ -328,7 +328,7 @@ function visualizeData(){
     g.selectAll('path.slice').data(vals).enter().append('path').attr('class', 'slice').attr('d', piesize).attr('fill', function(dat) {
         return colorgen(dat.data.val);
     });
-    svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return dat.data.val + ' #:' + dat.data.count;})
+    svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return '# of ' + dat.data.val + ': ' + dat.data.count;})
         .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 25 * (n + 1);});
 }
 
