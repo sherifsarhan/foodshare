@@ -10,7 +10,7 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
-var foodCountDB = 12;
+var foodCountDB = 13;
 foodshareRef.once("value")
     .then(function(snapshot) {
         foodCountDB = snapshot.numChildren(); // 1 ("name")
@@ -119,17 +119,6 @@ foodshareRef.on('child_removed', function(data) {
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
-
-    foodCount++;
-    if(foodCount == foodCountDB){
-        visualizeData();
-    }
-
-    //get coordinates
-    myLatLng = {lat: data.val().lat, lng: data.val().lng};
-
-    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
-
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
         data.val().tag = "Unknown";
@@ -140,6 +129,15 @@ foodshareRef.on("child_added", function(data){
     else{
         tags[data.val().tag] = 1;
     }
+    foodCount++;
+    if(foodCount == foodCountDB){
+        visualizeData();
+    }
+
+    //get coordinates
+    myLatLng = {lat: data.val().lat, lng: data.val().lng};
+
+    var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
     markers[count] = tempMarker;
 
