@@ -119,7 +119,16 @@ foodshareRef.on('child_removed', function(data) {
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
-
+    if ($.trim(data.val().tag).length === 0){
+        // string is invalid
+        data.val().tag = "Unknown";
+    }
+    if(tags.hasOwnProperty(data.val().tag)){
+        tags[data.val().tag]++;
+    }
+    else{
+        tags[data.val().tag] = 1;
+    }
     foodCount++;
     if(foodCount == foodCountDB){
         visualizeData();
@@ -129,13 +138,6 @@ foodshareRef.on("child_added", function(data){
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
 
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
-
-    if(tags.hasOwnProperty(data.val().tag)){
-        tags[data.val().tag]++;
-    }
-    else{
-        tags[data.val().tag] = 1;
-    }
 
     markers[count] = tempMarker;
 
