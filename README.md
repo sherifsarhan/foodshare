@@ -11,9 +11,9 @@ Total Scenarios:
 
 Implemented Scenarios:
 
-1)Register
+1)Register (Updated for React)
 
-2)Login
+2)Login (Updated for React)
 
 3)Post/read
 
