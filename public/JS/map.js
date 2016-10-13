@@ -333,6 +333,6 @@ function visualizeData(){
         return colorgen(dat.data.val);
     });
     svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return dat.data.val + ' #:' + dat.data.count;})
-        .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 40 * (n + 1);});
+        .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 25 * (n + 1);});
 }
 
