@@ -10,7 +10,7 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
-var foodCountDB = 13;
+var foodCountDB = 14;
 foodshareRef.once("value")
     .then(function(snapshot) {
         foodCountDB = snapshot.numChildren(); // 1 ("name")
