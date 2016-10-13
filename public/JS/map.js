@@ -274,7 +274,7 @@ var piedata = [
 
 //initilizing pie chart through d3 built-ins and feed it some data
 var piechart = d3.layout.pie().value(function(dat) {return dat.count});
-var vals = piechart(piedata);
+var vals = piechart(getVisualData());
 
 //size of the pie chart
 var piesize = d3.svg.arc().innerRadius(50).outerRadius(100);
