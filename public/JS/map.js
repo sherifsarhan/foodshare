@@ -10,6 +10,11 @@ var config = {
 firebase.initializeApp(config);
 
 var foodshareRef = firebase.database().ref("foodshare");
+var foodCountDB = 0;
+foodshareRef.on("value", function(snapshot) {
+        foodCountDB = snapshot.numChildren(); // 1 ("name")
+        visualizeData();
+    });
 
 var uid = "";
 //get user info if they're signed in
@@ -17,6 +22,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         // User is signed in.
         uid = user.uid;
+        signedIn = true;
     } else {
         // No user is signed in.
     }
@@ -30,7 +36,6 @@ var markers = {};
 var map;
 var count=0;
 var pointerMarker;
-var defaultIcon;
 //--------------GOOGLE MAPS-----------------
 function initMap() {
     var mapDiv = document.getElementById('map');
@@ -49,7 +54,7 @@ function initMap() {
         // input box with text
         if (selectedMarker){
             // $('.foodInfo').val("");
-            foodList.updateInput("");
+            foodList.updateInput("","");
         }
 
         // indicate that the last item to be selected
@@ -110,7 +115,29 @@ foodshareRef.on('child_removed', function(data) {
     }
 });
 
+
+var tags = {};
+var foodCount = 0;
 foodshareRef.on("child_added", function(data){
+
+    // foodCountDB = data.numChildren();
+    console.log(foodCountDB);
+
+    if ($.trim(data.val().tag).length === 0){
+        // string is invalid
+        data.val().tag = "Unknown";
+    }
+    if(tags.hasOwnProperty(data.val().tag)){
+        tags[data.val().tag]++;
+    }
+    else{
+        tags[data.val().tag] = 1;
+    }
+    foodCount++;
+    if(foodCount == foodCountDB){
+        visualizeData();
+    }
+
     //get coordinates
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
 
@@ -134,7 +161,7 @@ foodshareRef.on("child_added", function(data){
     tempMarker.addListener('click', function () {
         // var marker = this;
         LatLng = tempMarker.position;
-        foodList.updateInput(data.val().food);
+        foodList.updateInput(data.val().food, data.val().tag);
 
         infoWindow.open(tempMarker.get('map'), tempMarker);
         selectedMarker = tempMarker;
@@ -143,53 +170,54 @@ foodshareRef.on("child_added", function(data){
 
 //--------------JS FUNCTIONS-----------------
 
-// //Takes an ID, hides it if its currently on the page, returns bool on what happened.
-// function hideIfOnPage(hideID) {
-//     if ($(hideID).length){
-//         ($(hideID)).hide();
-//         return true;
-//     }
-//     return false;
-// }
+//Takes an ID, hides it if its currently on the page, returns bool on what happened.
+function hideIfOnPage(hideID) {
+    if ($(hideID).length){
+        ($(hideID)).hide();
+        return true;
+    }
+    return false;
+}
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
-    // //Initially hides the elements which will be toggled by the select
-    // hideIfOnPage("#location");
-    // hideIfOnPage("#quantity");
-    // hideIfOnPage("#foodtype");
-    //
-    // //when the select changes display the desired div and hide any that are currently showing.
-    // $("#mapselect").change(function() {
-    //     var currentlySelected = $('#mapselect').find(":selected").text();
-    //     if (currentlySelected == "Food Type"){
-    //         hideIfOnPage("#location");
-    //         hideIfOnPage("#quantity");
-    //         var foodtype = $("#foodtype");
-    //         foodtype.show();
-    //         console.log(foodtype.data("food-id"));
-    //     }
-    //     else{
-    //         if (currentlySelected == "Location"){
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#quantity");
-    //             var location = $("#location");
-    //             location.show();
-    //             console.log(location.data("loc-id"));
-    //         }
-    //         else{
-    //             hideIfOnPage("#foodtype");
-    //             hideIfOnPage("#location");
-    //             var quantity = $("#quantity");
-    //             quantity.show();
-    //             console.log(quantity.data("quan-id"));
-    //         }
-    //     }
-    // });
+    //Initially hides the elements which will be toggled by the select
+    hideIfOnPage("#location");
+    hideIfOnPage("#quantity");
+    hideIfOnPage("#foodtype");
+
+    //when the select changes display the desired div and hide any that are currently showing.
+    $("#mapselect").change(function() {
+        var currentlySelected = $('#mapselect').find(":selected").text();
+        if (currentlySelected == "Food Type"){
+            hideIfOnPage("#location");
+            hideIfOnPage("#quantity");
+            var foodtype = $("#foodtype");
+            foodtype.show();
+            console.log(foodtype.data("food-id"));
+        }
+        else{
+            if (currentlySelected == "Location"){
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#quantity");
+                var location = $("#location");
+                location.show();
+                console.log(location.data("loc-id"));
+            }
+            else{
+                hideIfOnPage("#foodtype");
+                hideIfOnPage("#location");
+                var quantity = $("#quantity");
+                quantity.show();
+                console.log(quantity.data("quan-id"));
+            }
+        }
+    });
 });
 
 function deleteMarker (){
     // $('.foodInfo').val("");
+    foodList.updateInput("", "");
 
     //delete the selectedMarker and redraw the map
     for(marker in markers){
@@ -198,12 +226,11 @@ function deleteMarker (){
             return selectedMarker.text;
         }
     }
-    foodList.updateInput("");
 }
 
 
 //---------functions to be used by react visuals-----
-function addUpdateMarker(text) {
+function addUpdateMarker(text, tag) {
     var markerText = text;
 
     //if we are updating the text of a selected marker
@@ -216,7 +243,8 @@ function addUpdateMarker(text) {
                     'food': selectedMarker.text,
                     'lat' : selectedMarker.position.lat(),
                     'lng' : selectedMarker.position.lng(),
-                    'uid' : selectedMarker.uid
+                    'uid' : selectedMarker.uid,
+                    'tag' : selectedMarker.tag
                 });
                 return;
             }
@@ -231,7 +259,8 @@ function addUpdateMarker(text) {
         'food': markerText,
         'lat' : latLng.lat(),
         'lng' : latLng.lng(),
-        'uid' : uid
+        'uid' : uid,
+        'tag' : tag
     });
     submitClicked = true;
 }
@@ -239,3 +268,73 @@ function addUpdateMarker(text) {
 function getFoodList(render){
     foodList = render;
 }
+
+function checkLoggedIn(){
+    return uid;
+}
+
+
+
+//VISUALIZATION STUFF
+//To do: Grab some data to represent from google maps and place in here (doesnt have to be "starts with A... and so on)
+// var piedata = [
+//   { val: 'Starts with A',  count: 100 },
+//   { val: 'Starts with B',  count: 17 },
+//   { val: 'Starts with C',  count: 10 },
+// ];
+//
+// //initilizing pie chart through d3 built-ins and feed it some data
+// var piechart = d3.layout.pie().value(function(dat) {return dat.count});
+// var vals = piechart(piedata);
+//
+// //size of the pie chart
+// var piesize = d3.svg.arc().innerRadius(50).outerRadius(100);
+//
+// //link to div
+// var svg = d3.select('svg.pie');
+//
+// //d3 color generator
+// var colorgen = d3.scale.category10();
+//
+// //position of pie chart
+// var g = svg.append('g').attr('transform', 'translate(300, 100)');
+//
+// //set up pie chart & legend
+// g.selectAll('path.slice').data(vals).enter().append('path').attr('class', 'slice').attr('d', piesize).attr('fill', function(dat) {
+//     return colorgen(dat.data.val);
+// });
+// svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return dat.data.val + ' #:' + dat.data.count;})
+//     .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 40 * (n + 1);});
+
+
+function visualizeData(){
+    var tagsD3 = [];
+    for (tag in tags){
+        if (tags.hasOwnProperty(tag)){
+            tagsD3.push({val:tag, count:tags[tag]});
+        }
+    }
+    //initilizing pie chart through d3 built-ins and feed it some data
+    var piechart = d3.layout.pie().value(function(dat) {return dat.count});
+    var vals = piechart(tagsD3);
+
+//size of the pie chart
+    var piesize = d3.svg.arc().innerRadius(50).outerRadius(100);
+
+//link to div
+    var svg = d3.select('svg.pie');
+
+//d3 color generator
+    var colorgen = d3.scale.category10();
+
+//position of pie chart
+    var g = svg.append('g').attr('transform', 'translate(300, 100)');
+
+//set up pie chart & legend
+    g.selectAll('path.slice').data(vals).enter().append('path').attr('class', 'slice').attr('d', piesize).attr('fill', function(dat) {
+        return colorgen(dat.data.val);
+    });
+    svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return '# of ' + dat.data.val + ': ' + dat.data.count;})
+        .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 25 * (n + 1);});
+}
+

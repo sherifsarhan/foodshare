@@ -1,7 +1,9 @@
-//-------------------------------------------------------------------
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {Button, Input} from 'react-materialize'
+//credit to Professor Bell from GMU's SWE-432
 
-
-var TodoList = React.createClass({
+var FoodListItems = React.createClass({
     render: function() {
         var createItem = function(item) {
             return <li key={item.id}>{item.text}</li>;
@@ -11,26 +13,34 @@ var TodoList = React.createClass({
 });
 // var itemsHash = {};
 // var idxCount = 0;
-var TodoApp = React.createClass({
+var FoodListApp = React.createClass({
     getInitialState: function() {
-        return {items: [], text: ''};
+        return {items: [], text: '', tag: ''};
     },
     onChange: function(e) {
         this.setState({text: e.target.value});
     },
+    onTagChange: function(e) {
+        this.setState({tag: e.target.value});
+    },
     handleAdd: function() {
+        console.log(checkLoggedIn());
+        if(!checkLoggedIn()){
+            alert("You must be signed in to add a FoodShare!");
+            return;
+        }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
         // itemsHash[count] = this.state.text;
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
-        addUpdateMarker(this.state.text);
+        addUpdateMarker(this.state.text, this.state.tag);
     },
     handleAddHelper: function(){
         return this.handleAdd();
     },
-    updateInput: function(text) {
-        this.setState({items: this.state.items, text: text});
+    updateInput: function(text, tag) {
+        this.setState({items: this.state.items, text: text, tag: tag});
     },
     handleDelete: function() {
         var deleteItem = deleteMarker();
@@ -44,17 +54,19 @@ var TodoApp = React.createClass({
     render: function() {
         return (
             <div>
-            <TodoList items={this.state.items} />
+            <FoodListItems items={this.state.items} />
         <form onSubmit={this.submission}>
-        <input placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
-        <button type="button" onClick={this.handleAdd}>{'Add #' + (this.state.items.length + 1)}</button>
-            <button type="button" onClick={this.handleDelete}>{"Delete"}</button>
+        <Input className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
+        <Input className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
+
+        <Button type="button" onClick={this.handleAdd}>Add</Button>
+            <Button type="button" onClick={this.handleDelete}>{"Delete"}</Button>
         </form>
         </div>
         );
     }
 });
 
-var foodList = ReactDOM.render(<TodoApp />, document.getElementById('list-container'));
+var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
 
 getFoodList(foodList);
