@@ -4,22 +4,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Modal, Button, Input, Row} from 'react-materialize'
-var ReactTestUtils = require('react-addons-test-utils');
 
-// var config = {
-//     apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
-//     authDomain: "foodshare-1474316972332.firebaseapp.com",
-//     databaseURL: "https://foodshare-1474316972332.firebaseio.com",
-//     storageBucket: "foodshare-1474316972332.appspot.com",
-//     messagingSenderId: "151948214475"
-// };
-//
-// firebase.initializeApp(config);
-//
-// var foodshareRef = firebase.database().ref("foodshare");
+//---------------------------------------------------------------------
+var config = {
+    apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
+    authDomain: "foodshare-1474316972332.firebaseapp.com",
+    databaseURL: "https://foodshare-1474316972332.firebaseio.com",
+    storageBucket: "foodshare-1474316972332.appspot.com",
+    messagingSenderId: "151948214475"
+};
+
+firebase.initializeApp(config);
+
+var foodshareRef = firebase.database().ref("foodshare");
 
 var signedIn = false;
-var uid = "testa";
+var uid = "test";
 //get user info if they're signed in
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
@@ -87,7 +87,7 @@ class NavBar extends React.Component{
 
                     // need to keep track that user is logged in
                     // and also Hide the login box
-                    //console.log($('#modal1').html());
+                    console.log($('#modal1').html());
                     $('#modal1').closeModal();
 
 
@@ -160,22 +160,23 @@ class NavBar extends React.Component{
                                 <a className="nav-link whitetext" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
                                 </a>
-                            :
-                                <Modal className="loginModal" id="modal1"
-                                header='Login and Registration'
-                                trigger={
-                                <Button ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
-                                }>
-                                <LoginBox loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
-                                          email={this.state.email} onEmailChange={this.onEmailChange}
-                                          password={this.state.password} onPasswordChange={this.onPasswordChange}
-                                          showError={this.state.showError} error={this.state.error}
-                                          showSuccess={this.state.showSuccess}
-                                          showLoginBox={this.state.showLoginBox}
-                                          success={this.state.success}
-                                          hideError={this.hideError}
-                                          hideSuccess={this.hideSuccess}>
-                                </LoginBox>
+                                :
+                                <Modal id="modal1"
+                                       modalOptions={{test:67,age:50}}
+                                       header='Login and Registration'
+                                       trigger={
+                                           <Button waves='light'>Login and Registration</Button>
+                                       }>
+                                    <LoginBox loginHandler = {this.loginHandler} registerHandler = {this.registerHandler}
+                                              email={this.state.email} onEmailChange={this.onEmailChange}
+                                              password={this.state.password} onPasswordChange={this.onPasswordChange}
+                                              showError={this.state.showError} error={this.state.error}
+                                              showSuccess={this.state.showSuccess}
+                                              showLoginBox={this.state.showLoginBox}
+                                              success={this.state.success}
+                                              hideError={this.hideError}
+                                              hideSuccess={this.hideSuccess}>
+                                    </LoginBox>
                                 </Modal>
                             }
 
@@ -194,8 +195,6 @@ class LoginBox extends React.Component{
         this.state = {email: "", password: "", showError: false, error: "",
             success: "", showSuccess: false, showLoginBox: true,
             loginState: false, currentUser: ""};
-        this.onLoginHandler = this.onLoginHandler.bind(this);
-        this.onRegisterHandler = this.onRegisterHandler.bind(this);
     };
 
     handleOnEmailChange(e){
@@ -217,9 +216,6 @@ class LoginBox extends React.Component{
     onLoginHandler(e){
         this.props.loginHandler(e);
     }
-    onRegisterHandler(e){
-        this.props.registerHandler(e);
-    }
 
     render() {
         return(
@@ -240,13 +236,10 @@ class LoginBox extends React.Component{
                             : null}
                     </Row>
                     <Row>
-                        {/*<Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        {/*<Button className="lgnBtn" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        <Button className="lgnBtn" onClick={this.onLoginHandler} type="button">LOGIN</Button>
+                        <Button className="col s12 cyan lighten-2" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>
                     </Row>
                     <Row>
-                        {/*<Button className="col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>*/}
-                        <Button className="regBtn" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
+                        <Button className="col s12 orange accent-4" onClick={this.props.registerHandler.bind(this)} type="button">REGISTER</Button>
                     </Row>
                 </form>
             </Row>
@@ -259,71 +252,3 @@ ReactDOM.render(
     document.getElementById('login')
 );
 
-describe('NavBar', function () {
-
-    var navBarComponent, loginBoxComponent, element;
-    beforeEach(function () {
-        element = React.createElement(NavBar);
-        navBarComponent = ReactTestUtils.renderIntoDocument(element);
-        navBarComponent.setState({email: "abc@def.com", password: "123"});
-        var buttonLgnReg = ReactTestUtils.findRenderedDOMComponentWithClass(navBarComponent, "lgnRegBtn");
-        ReactTestUtils.Simulate.click(buttonLgnReg);
-    });
-    it("Has a Login/Registration button", function() {
-        let buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(navBarComponent, "lgnRegBtn");
-        expect(buttons[0]).not.toBeUndefined();
-        expect(buttons[0].innerHTML).toBe("<!-- react-text: 6 -->Login and Registration<!-- /react-text -->");
-    });
-    it("Has a LoginBox component", function() {
-        expect(function () {
-            //tests to see if child component exists when rendered
-            ReactTestUtils.scryRenderedComponentsWithType(navBarComponent, LoginBox);
-        }).not.toThrow();
-    });
-    describe("Login button", function () {
-        beforeEach(function () {
-            spyOn(navBarComponent, 'loginHandler');
-        });
-        it("Causes the login handler to be called", function () {
-            loginBoxComponent = ReactTestUtils.renderIntoDocument(
-                <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
-                    email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
-                    password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
-                    showError={navBarComponent.state.showError} error={navBarComponent.state.error}
-                    showSuccess={navBarComponent.state.showSuccess}
-                    showLoginBox={navBarComponent.state.showLoginBox}
-                    success={navBarComponent.state.success}
-                    hideError={navBarComponent.hideError}
-                    hideSuccess={navBarComponent.hideSuccess}>
-            </LoginBox>);
-
-            var buttonLgn = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "lgnBtn");
-            ReactTestUtils.Simulate.click(buttonLgn);
-            $('#modal1').closeModal();
-            expect(navBarComponent.loginHandler).toHaveBeenCalled();
-        });
-    });
-    describe("Register button", function () {
-        beforeEach(function () {
-            spyOn(navBarComponent, 'registerHandler');
-        });
-        it("Causes the register handler to be called", function () {
-            loginBoxComponent = ReactTestUtils.renderIntoDocument(
-                <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
-                          email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
-                          password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
-                          showError={navBarComponent.state.showError} error={navBarComponent.state.error}
-                          showSuccess={navBarComponent.state.showSuccess}
-                          showLoginBox={navBarComponent.state.showLoginBox}
-                          success={navBarComponent.state.success}
-                          hideError={navBarComponent.hideError}
-                          hideSuccess={navBarComponent.hideSuccess}>
-                </LoginBox>);
-
-            var buttonReg = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "regBtn");
-            ReactTestUtils.Simulate.click(buttonReg);
-            $('#modal1').closeModal();
-            expect(navBarComponent.registerHandler).toHaveBeenCalled();
-        });
-    });
-});
