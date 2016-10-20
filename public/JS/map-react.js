@@ -36,7 +36,7 @@ var FoodListApp = React.createClass({
         // itemsHash[count] = this.state.text;
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
-        // addUpdateMarker(this.state.text, this.state.tag);
+        addUpdateMarker(this.state.text, this.state.tag);
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
@@ -51,7 +51,7 @@ var FoodListApp = React.createClass({
         delete this.state.items[deleteItem];
     },
     submission: function(e) {
-        // this.handleAdd(e);
+        this.handleAdd(e);
         e.preventDefault();
     },
     render: function() {
