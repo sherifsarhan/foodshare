@@ -5,19 +5,18 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {Modal, Button, Input, Row} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
-// import ReactTestUtils from 'react-addons'
 
-var config = {
-    apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
-    authDomain: "foodshare-1474316972332.firebaseapp.com",
-    databaseURL: "https://foodshare-1474316972332.firebaseio.com",
-    storageBucket: "foodshare-1474316972332.appspot.com",
-    messagingSenderId: "151948214475"
-};
-
-firebase.initializeApp(config);
-
-var foodshareRef = firebase.database().ref("foodshare");
+// var config = {
+//     apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
+//     authDomain: "foodshare-1474316972332.firebaseapp.com",
+//     databaseURL: "https://foodshare-1474316972332.firebaseio.com",
+//     storageBucket: "foodshare-1474316972332.appspot.com",
+//     messagingSenderId: "151948214475"
+// };
+//
+// firebase.initializeApp(config);
+//
+// var foodshareRef = firebase.database().ref("foodshare");
 
 var signedIn = false;
 var uid = "testa";
@@ -262,10 +261,9 @@ ReactDOM.render(
 
 describe('NavBar', function () {
 
-    var navBarComponent, loginBoxComponent, element, element2, renderedDOM;
+    var navBarComponent, loginBoxComponent, element;
     beforeEach(function () {
         element = React.createElement(NavBar);
-        // element2 = React.createElement(LoginBox);
         navBarComponent = ReactTestUtils.renderIntoDocument(element);
         navBarComponent.setState({email: "abc@def.com", password: "123"});
         var buttonLgnReg = ReactTestUtils.findRenderedDOMComponentWithClass(navBarComponent, "lgnRegBtn");
