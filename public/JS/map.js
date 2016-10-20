@@ -121,7 +121,7 @@ var foodCount = 0;
 foodshareRef.on("child_added", function(data){
 
     // foodCountDB = data.numChildren();
-    console.log(foodCountDB);
+    // console.log(foodCountDB);
 
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
@@ -276,37 +276,6 @@ function checkLoggedIn(){
 
 
 //VISUALIZATION STUFF
-//To do: Grab some data to represent from google maps and place in here (doesnt have to be "starts with A... and so on)
-// var piedata = [
-//   { val: 'Starts with A',  count: 100 },
-//   { val: 'Starts with B',  count: 17 },
-//   { val: 'Starts with C',  count: 10 },
-// ];
-//
-// //initilizing pie chart through d3 built-ins and feed it some data
-// var piechart = d3.layout.pie().value(function(dat) {return dat.count});
-// var vals = piechart(piedata);
-//
-// //size of the pie chart
-// var piesize = d3.svg.arc().innerRadius(50).outerRadius(100);
-//
-// //link to div
-// var svg = d3.select('svg.pie');
-//
-// //d3 color generator
-// var colorgen = d3.scale.category10();
-//
-// //position of pie chart
-// var g = svg.append('g').attr('transform', 'translate(300, 100)');
-//
-// //set up pie chart & legend
-// g.selectAll('path.slice').data(vals).enter().append('path').attr('class', 'slice').attr('d', piesize).attr('fill', function(dat) {
-//     return colorgen(dat.data.val);
-// });
-// svg.append('g').attr('class', 'legend').selectAll('text').data(vals).enter().append('text').text(function(dat) {return dat.data.val + ' #:' + dat.data.count;})
-//     .attr('fill', function(dat) {return colorgen(dat.data.val);}).attr('y', function(dat, n) {return 40 * (n + 1);});
-
-
 function visualizeData(){
     var tagsD3 = [];
     for (tag in tags){
