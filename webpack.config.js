@@ -28,7 +28,7 @@ module.exports = {
     },
     output: {
         path: __dirname + "/public/JS",
-        publicPath: '/public/JS',
+        publicPath: "/public/JS",
         filename: "[name]-react.min.js"
     },
     plugins: debug ? [] : [
