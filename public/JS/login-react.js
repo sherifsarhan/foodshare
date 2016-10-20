@@ -163,7 +163,6 @@ class NavBar extends React.Component{
                                     {this.state.currentUser} (Logout)
                                 </a>
                             :
-                                //<a className="nav-link whitetext" onClick={() => this.refs.simpleDialog.show()}>
                                 <Modal id="modal1"
                                     modalOptions={{test:67,age:50}}
                                 header='Login and Registration'
@@ -183,12 +182,6 @@ class NavBar extends React.Component{
                                 </Modal>
                             }
 
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link whitetext" href="index.html">About</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link whitetext" href="#">Visualization (beta)</a>
                         </li>
                     </ul>
                 </nav>
