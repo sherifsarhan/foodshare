@@ -19,6 +19,9 @@ var FoodListApp = React.createClass({
     getInitialState: function() {
         return {items: [], text: '', tag: ''};
     },
+    componentDidMount: function(){
+        getFoodList(this);
+    },
     onChange: function(e) {
         this.setState({text: e.target.value});
     },
@@ -72,7 +75,6 @@ var FoodListApp = React.createClass({
 
 var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
 
-getFoodList(foodList);
 
 describe('FoodListApp', function() {
     var foodListAppComponent, element;
