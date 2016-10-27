@@ -155,7 +155,7 @@ class NavBar extends React.Component{
             <div>
                 <nav className="navbar navbar-light bg-faded">
                     <ul className="nav navbar-nav">
-                        <li className="nav-item active">
+                        <li className="nav-item">
                             {this.state.loginState ?
                                 <a className="nav-link whitetext" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
