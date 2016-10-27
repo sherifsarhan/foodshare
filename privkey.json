@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "foodshare-1474316972332",
+  "private_key_id": "0f3658e98ba6c35fb20905ab93b654e143b0c9e6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDlD72ftSxaTMLB\no7znoY8jV/qRGIhc5hbx0U0LzoMkM7YJ4hEGwyQoG8N1C4XZQc7ExtpiLFqbZaF/\nuS9BwcTJmESUzt9Qvyr2QpxkQLNKmTAjBqRnoqk9T2pOY7P3XqsMdAYwHZrzeabX\n8fOk/PiJsS+90Y0iptuPF30cdcBs4nwJEKk1WjcBa46HX9QFffePyTO2Snl2bjxf\nLblO+RFn9Me5dlKxkDuxMIFS3kq2e9FNR/eaMeAXwJO3qNpUONVvIfcDKe3YJETa\nv8GGRD78Z57jundWKuv9Eyrd8tXgDLXqBu7AfcIKmi1/OPIlqfyGt0nS3FlhKa6e\npjBoWcf5AgMBAAECggEBAMJko2agWK2hqz6ueKiTAWjbRzhP+5nrYtmB6ML2VXEp\nuXmVsyFsBolLVotEZilEofd5UugyAAsVKwO74xEJIrp7UOiA0CA0vH8VdKfYCNBs\nRN/UyT1yW/I+LVetYZOzcbI13PKEjXXHbgKhwUXpsfsYtg1/gyk/NeGv62t1uwIr\ncEBC7XocGpMVR9ZdFP88AHZINsbGWPmnJ14KkF8vrxBgBVyq0Q5zMsDO3YgAhWYu\nwEx4IPe7bYsDfSfmUUHO//k7HpDm43AfeIv5/8PBv2CSdAbsPowsIVa8gk44rrFB\nBiwwAIaf3AolvlWYg1a0kPasKqMg9jIpbWtyrhEbzkkCgYEA90vBPCGeG177tXAr\nnOQwweDL9Kw/LiwCimvqVAzPf9mZ1QXib3u0rn8hwNeACUMiBCQ//xop2PV+3w3i\n9hhq7IQWdg64B3uNv7fUEE2ZnifFZPRxzfSXiAl7o5L/Pw4N4zwqooYxVM2yB1+Q\nd+GEx1abPIGzJERDDq8n7wiqgnMCgYEA7R+vhmy38/r1iZeeXAZe1wVAlwW2WHIR\nn1AAVvQ6IN6RfiVB6Zfg1H5IPVfoY6V3NhSoNPanUQ2c4w2ja5VwR7eGayWF1Boq\nPXa3m53nQF9O9Vr/eE3Mg4Xe1KdacuslhFe48dy2TEEILrAeV6zJU+IRbDP0Ceow\nTKzx75LEdOMCgYEAy3jORo6Wi4jMbE4d5Fow7+Tpi6iJ15CoioIebQeZV2WQWCEe\nXYIYeRbri8MEexp8i5HUAi7hzby4pgjD/J68o1xPKtYTfzyetecoGj3vLp0kolsq\npD4iy/CZhU42rAgBTz27CryFLHSOjdiIgsrQuD8/PTquTiHIVvWxUtD7kpcCgYEA\niXcKAar7RYTiXV65Xm4PAyY3WJXmLQYL80ikucQiArYksHWW7X2vyGBhLrbMsR/W\nqVJ2ZSXsv49duT9J0u+yRNE/KtR47goxHKq7LIrw6h+WnaSgX7Tyb/jmwm82f1KU\n0FEulYA3aqN0w+Qz4u33VRrEsO65dhn+4CSOqS1zmLMCgYA0nU8hsCEPF68KuAXI\nJ96OoAFHym62KNpK48ynBdoh82C1di6lazfmAnSk+6Zx1dVWg0UDGiwKfW3dVSlT\ndmunsDJAKVhKLMph1FYJUyKGC7zKz33wuPNoRoiL8MQ6fIuamKytH4zPfRRn2IYm\nNmEUxPR3G4ZQil/zdkwZM4G4oQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "express@foodshare-1474316972332.iam.gserviceaccount.com",
+  "client_id": "112864268787516351407",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/express%40foodshare-1474316972332.iam.gserviceaccount.com"
+}
