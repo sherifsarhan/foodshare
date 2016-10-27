@@ -6,10 +6,11 @@ var express = require('express');
 var fileUpload = require('express-fileupload');
 var path = require('path');
 var app = express();
-// var gcloud = require('google-cloud');
+var gcloud = require('google-cloud');
 var multer = require("multer");
-var uploader = multer({ storage: multer.memoryStorage});
+var uploader = multer({ storage: multer.memoryStorage({}) });
 var bodyParser = require('body-parser');
+// app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -23,65 +24,66 @@ firebase.initializeApp({
 /**
  * Google cloud storage part
  */
-// var CLOUD_BUCKET="foodshare-1474316972332.appspot.com"; //From storage console, list of buckets
-// var gcs = gcloud.storage({
-//     projectID: "151948214475",
-//     keyFilename: 'privkey.json'
-// });
-//
-// function getPublicUrl (filename) {
-//     return 'https://storage.googleapis.com/' + CLOUD_BUCKET + '/' + filename;
-// }
-//
-// var bucket = gcs.bucket(CLOUD_BUCKET);
-// //From https://cloud.google.com/nodejs/getting-started/using-cloud-storage
-// function sendUploadToGCS (req, res, next) {
-//     if (!req.file) {
-//         return next();
-//     }
-//
-//     var gcsname = Date.now() + req.file.originalname;
-//     var file = bucket.file(gcsname);
-//
-//
-//     var stream = file.createWriteStream({
-//         metadata: {
-//             contentType: req.file.mimetype
-//         }
-//     });
-//
-//     stream.on('error', function (err) {
-//         req.file.cloudStorageError = err;
-//         next(err);
-//     });
-//
-//     stream.on('finish', function () {
-//         req.file.cloudStorageObject = gcsname;
-//         req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
-//         var options = {
-//             entity: 'allUsers',
-//             role: gcs.acl.READER_ROLE
-//         };
-//         file.acl.add(options, function(a,e){next();});//Make file world-readable; this is async so need to wait to return OK until its done
-//     });
-//
-//     stream.end(req.file.buffer);
-// }
-
-app.post('/uploadPic', function (req, res) {
-    console.log("Uploading pic to express");
-    var foodPic = req.body.data;
-    foodPic.mv('/foodpics/testpic.jpg', function (err) {
-        if(err){
-            res.status(500).send(err);
-        }
-        else{
-            res.send('File uploaded!');
-        }
-    });
+var CLOUD_BUCKET="foodshare-1474316972332.appspot.com"; //From storage console, list of buckets
+var gcs = gcloud.storage({
+    projectId: "151948214475",
+    keyFilename: 'privkey.json'
 });
 
+function getPublicUrl (filename) {
+    return 'https://storage.googleapis.com/' + CLOUD_BUCKET + '/' + filename;
+}
+
+var bucket = gcs.bucket(CLOUD_BUCKET);
+
+//From https://cloud.google.com/nodejs/getting-started/using-cloud-storage
+function sendUploadToGCS (req, res, next) {
+    if (!req.file) {
+        return next();
+    }
+
+    var gcsname = Date.now() + req.file.originalname;
+    var file = bucket.file(gcsname);
+
+
+    var stream = file.createWriteStream({
+        metadata: {
+            contentType: req.file.mimetype
+        }
+    });
+
+    stream.on('error', function (err) {
+        req.file.cloudStorageError = err;
+        next(err);
+    });
+
+    stream.on('finish', function () {
+        req.file.cloudStorageObject = gcsname;
+        req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
+        var options = {
+            entity: 'allUsers',
+            role: gcs.acl.READER_ROLE
+        };
+        file.acl.add(options, function(a,e){next();});//Make file world-readable; this is async so need to wait to return OK until its done
+    });
+
+    stream.end(req.file.buffer);
+}
+
 var fireRef = firebase.database().ref('foodshare');
+
+//Make a new one
+app.post('/food', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
+    var data = {"text" : req.body.foodText};
+    if(req.file)
+        data.img = getPublicUrl(req.file.cloudStorageObject);
+    fireRef.push(data, function () {
+        res.send("OK!");
+    }).catch(function(){
+        res.status(403);
+        res.send();
+    });
+});
 
 app.use(express.static('public'));
 
@@ -101,19 +103,6 @@ app.post('/foodAdd', function (req,res) {
     });
     res.send("OK!");
 });
-
-// //Upload a food picture
-// app.post('/uploadPic', uploader.single("img"), sendUploadToGCS, function(req, res, next) {
-//     var data = {"text" : req.body.todoText};
-//     if(req.file)
-//         data.img = getPublicUrl(req.file.cloudStorageObject);
-//     fireRef.push(data, function () {
-//         res.send("OK!");
-//     }).catch(function(){
-//         res.status(403);
-//         res.send();
-//     });
-// });
 
 //Edit a foodshare
 app.put('/foodEdit', function (req,res) {

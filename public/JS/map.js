@@ -119,7 +119,7 @@ foodshareRef.on('child_removed', function(data) {
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
-
+    if(data.val().img) return;
     // foodCountDB = data.numChildren();
     // console.log(foodCountDB);
 

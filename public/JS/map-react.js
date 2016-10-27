@@ -1,10 +1,42 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Button, Input} from 'react-materialize'
+import {Button, Input, Row} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
 
-//credit to Professor Bell from GMU's SWE-432
+var fireRef = firebase.database().ref('foodshare');
+fireRef.on("child_added", function(v){
+    if(v.val().img) createFood(v.val().text, v.val().img);
+});
 
+function createFood(text, img)
+{
+    if(img)
+    {
+        $('#foodItems').append(
+            '<div id="foodItem" class="foodItem"><img src="'+img+'" /><br/>'+text+'</div>'
+        );
+        console.log("added img");
+    }
+    else
+        $('#foodItems').append(
+            '<div class="foodItem">'+text+'</div>'
+        );
+}
+$('#newItemForm').submit(function(e)
+{
+    e.preventDefault();
+    var formData = new FormData($("#newItemForm")[0]);
+    console.log(formData);
+    $.ajax({
+        type: "POST",
+        url: "/food",
+        data: formData,processData: false,
+        contentType: false
+
+    });
+});
+
+//credit to Professor Bell from GMU's SWE-432
 var FoodListItems = React.createClass({
     render: function() {
         var createItem = function(item) {
@@ -13,6 +45,7 @@ var FoodListItems = React.createClass({
         return <ul>{this.props.items.map(createItem)}</ul>;
     }
 });
+
 // var itemsHash = {};
 // var idxCount = 0;
 var FoodListApp = React.createClass({
@@ -66,10 +99,12 @@ var FoodListApp = React.createClass({
         <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
         <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
 
-        <Button type="button" className="addBtn" onClick={this.handleAdd}>Add</Button>
-        <Button type="button" className="delBtn" onClick={this.handleDelete}>Delete</Button>
+        <Row>
+            <Button type="button" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
+            <Button type="button" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
+        </Row>
         </form>
-        <ImageUpload></ImageUpload>
+        {/*<ImageUpload></ImageUpload>*/}
         </div>
         );
     }
@@ -84,7 +119,7 @@ class ImageUpload extends React.Component {
 
     _handleSubmit(e) {
         e.preventDefault();
-        // TODO: do something with -> this.state.file
+        // food: do something with -> this.state.file
         console.log('handle uploading-', this.state.file);
         var formData = new FormData();
         formData.append('photo', this.state.file, this.state.file.name);
@@ -93,7 +128,6 @@ class ImageUpload extends React.Component {
             url: "http://localhost:5000/uploadPic",
             type: "POST",
             data: formData,
-            contentType: 'multipart/form-data',
             processData: false
         });
     }
@@ -125,8 +159,8 @@ class ImageUpload extends React.Component {
 
         return (
             <div className="previewComponent">
-                <form onSubmit={(e)=>this._handleSubmit(e)}>
-                    <input className="fileInput" type="file" onChange={(e)=>this._handleImageChange(e)} />
+                <form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>
+                    <input className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
                     <button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>
                 </form>
                 <div className="imgPreview">
@@ -146,19 +180,19 @@ var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-co
 //         element = React.createElement(FoodListApp);
 //     });
 //     it("Has an add button", function () {
-//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         foodListAppComponent = ReactTestUtils.renderInfoodcument(element);
 //         var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
 //         expect(button).not.toBeUndefined();
 //         expect(button.innerHTML).toBe("<!-- react-text: 9 -->Add<!-- /react-text -->");
 //     });
 //     it("Has a delete button", function () {
-//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         foodListAppComponent = ReactTestUtils.renderInfoodcument(element);
 //         var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
 //         expect(button).not.toBeUndefined();
 //         expect(button.innerHTML).toBe("<!-- react-text: 11 -->Delete<!-- /react-text -->");
 //     });
 //     it("Has a foodList component", function() {
-//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         foodListAppComponent = ReactTestUtils.renderInfoodcument(element);
 //         expect(function () {
 //             ReactTestUtils.findRenderedComponentWithType(foodListAppComponent, FoodListItems);
 //         }).not.toThrow();
@@ -167,7 +201,7 @@ var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-co
 //         beforeEach(function () {
 //             // var methods = FoodListApp.prototype.__reactAutoBindMap;
 //             spyOn(FoodListApp.prototype, 'handleAdd').and.callThrough();
-//             foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//             foodListAppComponent = ReactTestUtils.renderInfoodcument(element);
 //         });
 //         it("Adds items to the list when Add is clicked", function() {
 //             var addButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
@@ -183,7 +217,7 @@ var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-co
 //     //     beforeEach(function () {
 //     //         var methods = FoodListApp.prototype.__reactAutoBindMap;
 //     //         var methodSpy = spyOn(methods, 'handleAdd').and.callThrough();
-//     //         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//     //         foodListAppComponent = ReactTestUtils.renderInfoodcument(element);
 //     //     });
 //     //     it("Adds items to the list when Add is clicked", function() {
 //     //         var delButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
