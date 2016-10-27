@@ -76,60 +76,60 @@ var FoodListApp = React.createClass({
 var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
 
 
-describe('FoodListApp', function() {
-    var foodListAppComponent, element;
-    beforeEach(function () {
-        element = React.createElement(FoodListApp);
-    });
-    it("Has an add button", function () {
-        foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
-        var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
-        expect(button).not.toBeUndefined();
-        expect(button.innerHTML).toBe("<!-- react-text: 9 -->Add<!-- /react-text -->");
-    });
-    it("Has a delete button", function () {
-        foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
-        var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
-        expect(button).not.toBeUndefined();
-        expect(button.innerHTML).toBe("<!-- react-text: 11 -->Delete<!-- /react-text -->");
-    });
-    it("Has a foodList component", function() {
-        foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
-        expect(function () {
-            ReactTestUtils.findRenderedComponentWithType(foodListAppComponent, FoodListItems);
-        }).not.toThrow();
-    });
-    describe("Add foodShare button", function() {
-        beforeEach(function () {
-            // var methods = FoodListApp.prototype.__reactAutoBindMap;
-            spyOn(FoodListApp.prototype, 'handleAdd').and.callThrough();
-            foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
-        });
-        it("Adds items to the list when Add is clicked", function() {
-            var addButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
-            // foodListAppComponent.setState({tag: "sampleTag"});
-            // $('#foodInfo').val("exampleFood");
-            // $('#foodTag').val("exampleTag");
-            ReactTestUtils.Simulate.click(addButton);
-            expect(foodListAppComponent.handleAdd).toHaveBeenCalled();
-            // expect(foodListAppComponent.state.items[0]).toBe("exampleFood");;
-        });
-    });
-    // describe("Delete foodShare button", function() {
-    //     beforeEach(function () {
-    //         var methods = FoodListApp.prototype.__reactAutoBindMap;
-    //         var methodSpy = spyOn(methods, 'handleAdd').and.callThrough();
-    //         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
-    //     });
-    //     it("Adds items to the list when Add is clicked", function() {
-    //         var delButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
-    //         // foodListAppComponent.setState({tag: "sampleTag"});
-    //         // $('#foodInfo').val("exampleFood");
-    //         // $('#foodTag').val("exampleTag");
-    //         ReactTestUtils.Simulate.click(addButton);
-    //         expect(methodSpy).toHaveBeenCalled();
-    //         // expect(foodListAppComponent.state.items[0]).toBe("exampleFood");;
-    //     });
-    // });
-
-});
+// describe('FoodListApp', function() {
+//     var foodListAppComponent, element;
+//     beforeEach(function () {
+//         element = React.createElement(FoodListApp);
+//     });
+//     it("Has an add button", function () {
+//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
+//         expect(button).not.toBeUndefined();
+//         expect(button.innerHTML).toBe("<!-- react-text: 9 -->Add<!-- /react-text -->");
+//     });
+//     it("Has a delete button", function () {
+//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         var button = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
+//         expect(button).not.toBeUndefined();
+//         expect(button.innerHTML).toBe("<!-- react-text: 11 -->Delete<!-- /react-text -->");
+//     });
+//     it("Has a foodList component", function() {
+//         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         expect(function () {
+//             ReactTestUtils.findRenderedComponentWithType(foodListAppComponent, FoodListItems);
+//         }).not.toThrow();
+//     });
+//     describe("Add foodShare button", function() {
+//         beforeEach(function () {
+//             // var methods = FoodListApp.prototype.__reactAutoBindMap;
+//             spyOn(FoodListApp.prototype, 'handleAdd').and.callThrough();
+//             foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//         });
+//         it("Adds items to the list when Add is clicked", function() {
+//             var addButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"addBtn");
+//             // foodListAppComponent.setState({tag: "sampleTag"});
+//             // $('#foodInfo').val("exampleFood");
+//             // $('#foodTag').val("exampleTag");
+//             ReactTestUtils.Simulate.click(addButton);
+//             expect(foodListAppComponent.handleAdd).toHaveBeenCalled();
+//             // expect(foodListAppComponent.state.items[0]).toBe("exampleFood");;
+//         });
+//     });
+//     // describe("Delete foodShare button", function() {
+//     //     beforeEach(function () {
+//     //         var methods = FoodListApp.prototype.__reactAutoBindMap;
+//     //         var methodSpy = spyOn(methods, 'handleAdd').and.callThrough();
+//     //         foodListAppComponent = ReactTestUtils.renderIntoDocument(element);
+//     //     });
+//     //     it("Adds items to the list when Add is clicked", function() {
+//     //         var delButton = ReactTestUtils.findRenderedDOMComponentWithClass(foodListAppComponent,"delBtn");
+//     //         // foodListAppComponent.setState({tag: "sampleTag"});
+//     //         // $('#foodInfo').val("exampleFood");
+//     //         // $('#foodTag').val("exampleTag");
+//     //         ReactTestUtils.Simulate.click(addButton);
+//     //         expect(methodSpy).toHaveBeenCalled();
+//     //         // expect(foodListAppComponent.state.items[0]).toBe("exampleFood");;
+//     //     });
+//     // });
+//
+// });
