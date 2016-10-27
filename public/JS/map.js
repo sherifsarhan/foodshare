@@ -222,7 +222,10 @@ function deleteMarker (){
     //delete the selectedMarker and redraw the map
     for(marker in markers){
         if (marker-1 == selectedMarker.id){
-            foodshareRef.child(selectedMarker.key).remove();
+            // foodshareRef.child(selectedMarker.key).remove();
+            $.ajax({url: "http://localhost:5000/foodDelete",
+                type: 'DELETE',
+                data: { key: selectedMarker.key}});
             return selectedMarker.text;
         }
     }
@@ -232,20 +235,27 @@ function deleteMarker (){
 //---------functions to be used by react visuals-----
 function addUpdateMarker(text, tag) {
     var markerText = text;
+    var markerTag = tag;
 
     //if we are updating the text of a selected marker
     if (selectedMarker){
         for(key in markers) {
             if (key - 1 == selectedMarker.id) {
                 selectedMarker.text = markerText;
+                selectedMarker.tag = markerTag;
                 //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-                foodshareRef.child(selectedMarker.key).set({
-                    'food': selectedMarker.text,
-                    'lat' : selectedMarker.position.lat(),
-                    'lng' : selectedMarker.position.lng(),
-                    'uid' : selectedMarker.uid,
-                    'tag' : selectedMarker.tag
-                });
+
+                console.log("tag is: " + selectedMarker.tag);
+                $.ajax({url: "http://localhost:5000/foodEdit",
+                    type: 'PUT',
+                    data:
+                    {key: selectedMarker.key,
+                    food: selectedMarker.text,
+                    lat : selectedMarker.position.lat(),
+                    lng : selectedMarker.position.lng(),
+                    uid : selectedMarker.uid,
+                    tag : selectedMarker.tag}});
+
                 return;
             }
         }
@@ -255,13 +265,14 @@ function addUpdateMarker(text, tag) {
         pointerMarker = null;
         selectedMarker = null;
     }
-    foodshareRef.push({
-        'food': markerText,
-        'lat' : latLng.lat(),
-        'lng' : latLng.lng(),
-        'uid' : uid,
-        'tag' : tag
-    });
+    $.post("http://localhost:5000/foodAdd",
+        {
+            food: markerText,
+            lat: latLng.lat(),
+            lng: latLng.lng(),
+            uid: uid,
+            tag: markerTag
+        });
     submitClicked = true;
 }
 

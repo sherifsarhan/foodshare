@@ -259,71 +259,71 @@ ReactDOM.render(
     document.getElementById('login')
 );
 
-describe('NavBar', function () {
-
-    var navBarComponent, loginBoxComponent, element;
-    beforeEach(function () {
-        element = React.createElement(NavBar);
-        navBarComponent = ReactTestUtils.renderIntoDocument(element);
-        navBarComponent.setState({email: "abc@def.com", password: "123"});
-        var buttonLgnReg = ReactTestUtils.findRenderedDOMComponentWithClass(navBarComponent, "lgnRegBtn");
-        ReactTestUtils.Simulate.click(buttonLgnReg);
-    });
-    it("Has a Login/Registration button", function() {
-        let buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(navBarComponent, "lgnRegBtn");
-        expect(buttons[0]).not.toBeUndefined();
-        expect(buttons[0].innerHTML).toBe("<!-- react-text: 6 -->Login and Registration<!-- /react-text -->");
-    });
-    it("Has a LoginBox component", function() {
-        expect(function () {
-            //tests to see if child component exists when rendered
-            ReactTestUtils.scryRenderedComponentsWithType(navBarComponent, LoginBox);
-        }).not.toThrow();
-    });
-    describe("Login button", function () {
-        beforeEach(function () {
-            spyOn(navBarComponent, 'loginHandler');
-        });
-        it("Causes the login handler to be called", function () {
-            loginBoxComponent = ReactTestUtils.renderIntoDocument(
-                <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
-                    email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
-                    password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
-                    showError={navBarComponent.state.showError} error={navBarComponent.state.error}
-                    showSuccess={navBarComponent.state.showSuccess}
-                    showLoginBox={navBarComponent.state.showLoginBox}
-                    success={navBarComponent.state.success}
-                    hideError={navBarComponent.hideError}
-                    hideSuccess={navBarComponent.hideSuccess}>
-            </LoginBox>);
-
-            var buttonLgn = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "lgnBtn");
-            ReactTestUtils.Simulate.click(buttonLgn);
-            $('#modal1').closeModal();
-            expect(navBarComponent.loginHandler).toHaveBeenCalled();
-        });
-    });
-    describe("Register button", function () {
-        beforeEach(function () {
-            spyOn(navBarComponent, 'registerHandler');
-        });
-        it("Causes the register handler to be called", function () {
-            loginBoxComponent = ReactTestUtils.renderIntoDocument(
-                <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
-                          email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
-                          password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
-                          showError={navBarComponent.state.showError} error={navBarComponent.state.error}
-                          showSuccess={navBarComponent.state.showSuccess}
-                          showLoginBox={navBarComponent.state.showLoginBox}
-                          success={navBarComponent.state.success}
-                          hideError={navBarComponent.hideError}
-                          hideSuccess={navBarComponent.hideSuccess}>
-                </LoginBox>);
-
-            var buttonReg = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "regBtn");
-            ReactTestUtils.Simulate.click(buttonReg);
-            $('#modal1').closeModal();
-            expect(navBarComponent.registerHandler).toHaveBeenCalled();
-        });
-    });
-});
+// describe('NavBar', function () {
+//
+//     var navBarComponent, loginBoxComponent, element;
+//     beforeEach(function () {
+//         element = React.createElement(NavBar);
+//         navBarComponent = ReactTestUtils.renderIntoDocument(element);
+//         navBarComponent.setState({email: "abc@def.com", password: "123"});
+//         var buttonLgnReg = ReactTestUtils.findRenderedDOMComponentWithClass(navBarComponent, "lgnRegBtn");
+//         ReactTestUtils.Simulate.click(buttonLgnReg);
+//     });
+//     it("Has a Login/Registration button", function() {
+//         let buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(navBarComponent, "lgnRegBtn");
+//         expect(buttons[0]).not.toBeUndefined();
+//         expect(buttons[0].innerHTML).toBe("<!-- react-text: 6 -->Login and Registration<!-- /react-text -->");
+//     });
+//     it("Has a LoginBox component", function() {
+//         expect(function () {
+//             //tests to see if child component exists when rendered
+//             ReactTestUtils.scryRenderedComponentsWithType(navBarComponent, LoginBox);
+//         }).not.toThrow();
+//     });
+//     describe("Login button", function () {
+//         beforeEach(function () {
+//             spyOn(navBarComponent, 'loginHandler');
+//         });
+//         it("Causes the login handler to be called", function () {
+//             loginBoxComponent = ReactTestUtils.renderIntoDocument(
+//                 <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
+//                     email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
+//                     password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
+//                     showError={navBarComponent.state.showError} error={navBarComponent.state.error}
+//                     showSuccess={navBarComponent.state.showSuccess}
+//                     showLoginBox={navBarComponent.state.showLoginBox}
+//                     success={navBarComponent.state.success}
+//                     hideError={navBarComponent.hideError}
+//                     hideSuccess={navBarComponent.hideSuccess}>
+//             </LoginBox>);
+//
+//             var buttonLgn = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "lgnBtn");
+//             ReactTestUtils.Simulate.click(buttonLgn);
+//             $('#modal1').closeModal();
+//             expect(navBarComponent.loginHandler).toHaveBeenCalled();
+//         });
+//     });
+//     describe("Register button", function () {
+//         beforeEach(function () {
+//             spyOn(navBarComponent, 'registerHandler');
+//         });
+//         it("Causes the register handler to be called", function () {
+//             loginBoxComponent = ReactTestUtils.renderIntoDocument(
+//                 <LoginBox loginHandler={navBarComponent.loginHandler} registerHandler = {navBarComponent.registerHandler}
+//                           email={navBarComponent.state.email} onEmailChange={navBarComponent.onEmailChange}
+//                           password={navBarComponent.state.password} onPasswordChange={navBarComponent.onPasswordChange}
+//                           showError={navBarComponent.state.showError} error={navBarComponent.state.error}
+//                           showSuccess={navBarComponent.state.showSuccess}
+//                           showLoginBox={navBarComponent.state.showLoginBox}
+//                           success={navBarComponent.state.success}
+//                           hideError={navBarComponent.hideError}
+//                           hideSuccess={navBarComponent.hideSuccess}>
+//                 </LoginBox>);
+//
+//             var buttonReg = ReactTestUtils.findRenderedDOMComponentWithClass(loginBoxComponent, "regBtn");
+//             ReactTestUtils.Simulate.click(buttonReg);
+//             $('#modal1').closeModal();
+//             expect(navBarComponent.registerHandler).toHaveBeenCalled();
+//         });
+//     });
+// });
