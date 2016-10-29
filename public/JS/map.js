@@ -223,7 +223,7 @@ function deleteMarker (){
     for(marker in markers){
         if (marker-1 == selectedMarker.id){
             // foodshareRef.child(selectedMarker.key).remove();
-            $.ajax({url: "http://localhost:5000/foodDelete",
+            $.ajax({url: "/foodDelete",
                 type: 'DELETE',
                 data: { key: selectedMarker.key}});
             return selectedMarker.text;
@@ -246,7 +246,7 @@ function addUpdateMarker(text, tag) {
                 //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
 
                 console.log("tag is: " + selectedMarker.tag);
-                $.ajax({url: "http://localhost:5000/foodEdit",
+                $.ajax({url: "/foodEdit",
                     type: 'PUT',
                     data:
                     {key: selectedMarker.key,
@@ -265,7 +265,7 @@ function addUpdateMarker(text, tag) {
         pointerMarker = null;
         selectedMarker = null;
     }
-    $.post("http://localhost:5000/foodAdd",
+    $.post("/foodAdd",
         {
             food: markerText,
             lat: latLng.lat(),

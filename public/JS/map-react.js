@@ -125,7 +125,7 @@ class ImageUpload extends React.Component {
         formData.append('photo', this.state.file, this.state.file.name);
         console.log(formData);
         $.ajax({
-            url: "http://localhost:5000/uploadPic",
+            url: "/uploadPic",
             type: "POST",
             data: formData,
             processData: false
