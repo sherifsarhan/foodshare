@@ -157,7 +157,8 @@ class NavBar extends React.Component{
                     <ul className="nav navbar-nav" style={{height:"100%", position: "relative"}}>
                         <li className="nav-item" style={{height:"100%"}}>
                             {this.state.loginState ?
-                                <a className="nav-link whitetext" onClick={this.handleLogout}>
+                                <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
+                                   className="nav-link whitetext" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
                                 </a>
                             :
