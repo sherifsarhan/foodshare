@@ -327,16 +327,6 @@ function addUpdateMarker(text, tag, img) {
                     contentType: false
                 });
 
-                // $.ajax({url: "/foodEdit",
-                //     type: 'PUT',
-                //     data:
-                //     {key: selectedMarker.key,
-                //     food: selectedMarker.text,
-                //     lat : selectedMarker.position.lat(),
-                //     lng : selectedMarker.position.lng(),
-                //     uid : selectedMarker.uid,
-                //     tag : selectedMarker.tag}});
-
                 return;
             }
         }
@@ -353,8 +343,6 @@ function addUpdateMarker(text, tag, img) {
     formData.append('lng',latLng.lng());
     formData.append('uid',uid);
     formData.append('tag',markerTag);
-
-
 
     // console.log(formData);
     $.ajax({
