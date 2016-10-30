@@ -25,7 +25,7 @@ function createFood(text, img)
                         '<p><a href="#">This is a link</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
-                        '<span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>'+
+                        '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
                         '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
                     '</div>'+
                 '</div>'+
@@ -104,23 +104,24 @@ var FoodListApp = React.createClass({
         delete this.state.items[deleteItem];
     },
     submission: function(e) {
-        this.handleAdd(e);
         e.preventDefault();
+        return false;
     },
     render: function() {
         return (
             <div>
             <FoodListItems items={this.state.items} />
-        <form onSubmit={this.submission}>
+        {/*<form onSubmit={this.submission}>*/}
         <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
         <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
+
+        <ImageUpload></ImageUpload>
 
         <Row>
             <Button type="button" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
             <Button type="button" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
         </Row>
-        </form>
-        {/*<ImageUpload></ImageUpload>*/}
+        {/*</form>*/}
         </div>
         );
     }
@@ -130,21 +131,26 @@ var FoodListApp = React.createClass({
 class ImageUpload extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {file: '',imagePreviewUrl: ''};
+        this.state = {file: '',
+            imagePreviewUrl: '',
+            foodText: 'test'
+        };
     }
 
     _handleSubmit(e) {
         e.preventDefault();
         // food: do something with -> this.state.file
-        console.log('handle uploading-', this.state.file);
+        // console.log('handle uploading-', this.state.file);
         var formData = new FormData();
-        formData.append('photo', this.state.file, this.state.file.name);
-        console.log(formData);
+        formData.append('img', this.state.file, this.state.file.name);
+        formData.append('foodText',this.state.foodText);
+        // console.log(formData);
         $.ajax({
-            url: "/uploadPic",
+            url: "/food",
             type: "POST",
             data: formData,
-            processData: false
+            processData: false,
+            contentType: false
         });
     }
 
