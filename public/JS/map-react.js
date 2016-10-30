@@ -5,14 +5,14 @@ var ReactTestUtils = require('react-addons-test-utils');
 
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    if(v.val().img) createFood(v.val().text, v.val().img);
+    if(v.val().img) createFood(v.val().food, v.val().img);
 });
 
 function createFood(text, img)
 {
     if(img)
     {
-        $('#foodItems').append(
+        $('#foodItems').prepend(
             '<div id="foodItem" class="foodItem">' +
                 // '<img src="'+img+'" /><br/>'+text+'' +
 
@@ -62,11 +62,9 @@ var FoodListItems = React.createClass({
     }
 });
 
-// var itemsHash = {};
-// var idxCount = 0;
 var FoodListApp = React.createClass({
     getInitialState: function() {
-        return {items: [], text: '', tag: ''};
+        return {items: [], text: '', tag: '', img: '', imgPreview: false};
     },
     componentDidMount: function(){
         getFoodList(this);
@@ -85,11 +83,10 @@ var FoodListApp = React.createClass({
         // }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
-        // itemsHash[count] = this.state.text;
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
-        addUpdateMarker(this.state.text, this.state.tag);
-        this.setState({tag: ''});
+        addUpdateMarker(this.state.text, this.state.tag, this.state.img);
+        this.setState({tag: '', imgPreview: false});
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
@@ -105,23 +102,25 @@ var FoodListApp = React.createClass({
     },
     submission: function(e) {
         e.preventDefault();
-        return false;
+    },
+    handleImageChange: function(image) {
+        this.setState({img: image, imgPreview: true})
     },
     render: function() {
         return (
             <div>
             <FoodListItems items={this.state.items} />
-        {/*<form onSubmit={this.submission}>*/}
+        <form onSubmit={this.submission}>
         <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
         <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
 
-        <ImageUpload></ImageUpload>
+        <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
 
         <Row>
             <Button type="button" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
             <Button type="button" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
         </Row>
-        {/*</form>*/}
+        </form>
         </div>
         );
     }
@@ -165,27 +164,33 @@ class ImageUpload extends React.Component {
                 file: file,
                 imagePreviewUrl: reader.result
             });
+            this.props.handleImageChange(this.state.file);
         };
 
         reader.readAsDataURL(file);
+
     }
 
     render() {
         let {imagePreviewUrl} = this.state;
         let $imagePreview = null;
-        if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} />);
+        if (this.props.imgPreview) {
+            $imagePreview = (<img style={{width: "100%",height: "100%",display: "block", margin: "auto"}}
+                                  src={imagePreviewUrl} />);
+            $('#getFile').val(this.state.file.filename);
+
         } else {
             $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+            $('#getFile').val("");
         }
 
         return (
             <div className="previewComponent">
-                <form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>
-                    <input className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
-                    <button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>
-                </form>
-                <div className="imgPreview">
+                {/*<form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>*/}
+                    <input id="getFile" className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
+                    {/*<button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>*/}
+                {/*</form>*/}
+                <div className="imgPreview foodItem">
                     {$imagePreview}
                 </div>
             </div>

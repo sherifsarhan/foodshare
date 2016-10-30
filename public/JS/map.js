@@ -296,7 +296,7 @@ function deleteMarker (){
 
 
 //---------functions to be used by react visuals-----
-function addUpdateMarker(text, tag) {
+function addUpdateMarker(text, tag, img) {
     var markerText = text;
     var markerTag = tag;
 
@@ -309,15 +309,33 @@ function addUpdateMarker(text, tag) {
                 //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
 
                 console.log("tag is: " + selectedMarker.tag);
-                $.ajax({url: "/foodEdit",
-                    type: 'PUT',
-                    data:
-                    {key: selectedMarker.key,
-                    food: selectedMarker.text,
-                    lat : selectedMarker.position.lat(),
-                    lng : selectedMarker.position.lng(),
-                    uid : selectedMarker.uid,
-                    tag : selectedMarker.tag}});
+
+                var formData = new FormData();
+                if(img) formData.append('img', img, img.name);
+                formData.append('key',selectedMarker.key);
+                formData.append('food',markerText);
+                formData.append('lat',latLng.lat());
+                formData.append('lng',latLng.lng());
+                formData.append('uid',uid);
+                formData.append('tag',markerTag);
+
+                $.ajax({
+                    url: "/foodEdit",
+                    type: "PUT",
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                });
+
+                // $.ajax({url: "/foodEdit",
+                //     type: 'PUT',
+                //     data:
+                //     {key: selectedMarker.key,
+                //     food: selectedMarker.text,
+                //     lat : selectedMarker.position.lat(),
+                //     lng : selectedMarker.position.lng(),
+                //     uid : selectedMarker.uid,
+                //     tag : selectedMarker.tag}});
 
                 return;
             }
@@ -328,14 +346,25 @@ function addUpdateMarker(text, tag) {
         pointerMarker = null;
         selectedMarker = null;
     }
-    $.post("/foodAdd",
-        {
-            food: markerText,
-            lat: latLng.lat(),
-            lng: latLng.lng(),
-            uid: uid,
-            tag: markerTag
-        });
+    var formData = new FormData();
+    if(img) formData.append('img', img, img.name);
+    formData.append('food',markerText);
+    formData.append('lat',latLng.lat());
+    formData.append('lng',latLng.lng());
+    formData.append('uid',uid);
+    formData.append('tag',markerTag);
+
+
+
+    // console.log(formData);
+    $.ajax({
+        url: "/foodAdd",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false
+    });
+
     submitClicked = true;
 }
 
