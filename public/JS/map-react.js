@@ -5,22 +5,33 @@ var ReactTestUtils = require('react-addons-test-utils');
 
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    if(v.val().img) createFood(v.val().food, v.val().img);
+    if(v.val().img) createFood(v.val().food, v.val().img, v.val().lat, v.val().lng);
 });
 
 $('#foodItems').on('click', "#selectCardImage", function () {
-    console.log(67);
+    //only one food item description should be open at time
+    var closeButtonParent = $(this).find('div.card-content').child;
+    $('i.material-icons.right').filter(function () {
+        return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
+    }).trigger('click');
+    console.log($(this).data('lat'));
+    console.log($(this).data('lng'));
+    pos = {
+        lat: $(this).data('lat'),
+        lng: $(this).data('lng')
+    };
+    map.setCenter(pos);
 });
 
 var firstRun = true;
-function createFood(text, img)
+function createFood(text, img, lat, lng)
 {
     if(img)
     {
         $('#foodItems').prepend(
             '<div id="foodItem" class="foodItem">' +
                 '<div class="card">'+
-                    '<div id="selectCardImage" class="card-image waves-effect waves-block waves-light">'+
+                    '<div id="selectCardImage" data-lat='+lat+' data-lng='+lng+' class="card-image waves-effect waves-block waves-light">'+
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
