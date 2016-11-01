@@ -44,6 +44,23 @@ var pos;
  * This constructor takes the control DIV as an argument.
  * @constructor
  */
+getLocation();
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getCoordinates);
+    } else {
+        alert("4");
+    }
+}
+
+function getCoordinates(position) {
+    pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+    };
+}
+
 function CenterControl(controlDiv, map) {
 
     // Set CSS for the control border.
@@ -69,35 +86,29 @@ function CenterControl(controlDiv, map) {
     controlText.innerHTML = 'Center Map';
     controlUI.appendChild(controlText);
 
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(getCoordinates);
-        } else {
-            alert("4");
-        }
-    }
-
-    function getCoordinates(position) {
-        pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
-    }
-
     // Setup the click event listeners: simply set the map to Chicago.
     controlUI.addEventListener('click', function() {
         getLocation();
         map.setCenter(pos);
+
+        var mev = {
+            stop: null,
+            latLng: new google.maps.LatLng(pos.lat, pos.lng)
+        }
+        google.maps.event.trigger(map, 'click', mev);
     });
 
 }
 
 function initMap() {
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
     var mapDiv = document.getElementById('map');
     map = new google.maps.Map(mapDiv, {
         center: {lat: 38.8320, lng: -77.3116},
         zoom: 16
     });
+    directionsDisplay.setMap(map);
 
     // Create the DIV to hold the control and call the CenterControl()
     // constructor passing in this DIV.

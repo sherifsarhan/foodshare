@@ -8,16 +8,19 @@ fireRef.on("child_added", function(v){
     if(v.val().img) createFood(v.val().food, v.val().img);
 });
 
+$('#foodItems').on('click', "#selectCardImage", function () {
+    console.log(67);
+});
+
+var firstRun = true;
 function createFood(text, img)
 {
     if(img)
     {
         $('#foodItems').prepend(
             '<div id="foodItem" class="foodItem">' +
-                // '<img src="'+img+'" /><br/>'+text+'' +
-
                 '<div class="card">'+
-                    '<div class="card-image waves-effect waves-block waves-light">'+
+                    '<div id="selectCardImage" class="card-image waves-effect waves-block waves-light">'+
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
@@ -31,12 +34,28 @@ function createFood(text, img)
                 '</div>'+
             '</div>'
         );
-        console.log("added img");
+        // console.log("added img");
     }
     else
-        $('#foodItems').append(
-            '<div class="foodItem">'+text+'</div>'
+        $('#foodItems').prepend(
+    '<div id="foodItem" class="foodItem">' +
+        '<div class="card">'+
+            '<div class="card-content">'+
+                '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
+                '<p><a href="#">This is a link</a></p>'+
+            '</div>'+
+            '<div class="card-reveal">'+
+                '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
+                '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+            '</div>'+
+        '</div>'+
+    '</div>'
         );
+
+    if(firstRun){
+
+        firstRun = false;
+    }
 }
 $('#newItemForm').submit(function(e)
 {
@@ -117,8 +136,8 @@ var FoodListApp = React.createClass({
         <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
 
         <Row>
-            <Button type="button" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
-            <Button type="button" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
+            <Button type="submit" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
+            <Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
         </Row>
         </form>
         </div>
