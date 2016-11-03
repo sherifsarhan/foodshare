@@ -3,10 +3,11 @@
 https://cryptic-badlands-95460.herokuapp.com/map.html
 
 Usage:
-Click anywhere on the map to drop a pin of where your foodShare is (or click 
+
+-Click anywhere on the map to drop a pin of where your foodShare is (or click 
 "Center Map") for your current location. Add in your desired details in the left sidebar and click "Add"
 
-To remove a foodShare, click on the pin you would like to remove, and click "Delete" in the left sidebar.
+-To remove a foodShare, click on the pin you would like to remove, and click "Delete" in the left sidebar.
 
 
 
