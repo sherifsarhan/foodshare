@@ -33,6 +33,7 @@ var selectedMarker;
 var submitClicked = false;
 var latLng;
 var markers = {};
+var markersTest = {};
 var map;
 var count=0;
 var pointerMarker;
@@ -94,7 +95,7 @@ function CenterControl(controlDiv, map) {
         var mev = {
             stop: null,
             latLng: new google.maps.LatLng(pos.lat, pos.lng)
-        }
+        };
         google.maps.event.trigger(map, 'click', mev);
     });
 
@@ -179,14 +180,10 @@ foodshareRef.on('child_changed', function(data) {
 
 //if a foodshare gets deleted from the firebase db
 foodshareRef.on('child_removed', function(data) {
-    for(marker in markers){
-        if(markers[marker].key == data.key){
-            markers[marker].setMap(null);
-            markers[marker] = null;
-            delete markers[marker];
-            break;
-        }
-    }
+//    TEST MARKER AREA
+    markersTest[data.key].setMap(null);
+    markersTest[data.key] = null;
+    delete markersTest[data.key];
 });
 
 
@@ -194,8 +191,6 @@ var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
     if(!data.val().lat || !data.val().lng) return;
-    // foodCountDB = data.numChildren();
-    // console.log(foodCountDB);
 
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
@@ -218,6 +213,7 @@ foodshareRef.on("child_added", function(data){
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
     markers[count] = tempMarker;
+    markersTest[data.key] = tempMarker;
 
     // // creates the info window for the marker
     var infoWindow = new google.maps.InfoWindow({
@@ -290,19 +286,12 @@ $(document).ready(function() {
 });
 
 function deleteMarker (){
-    // $('.foodInfo').val("");
     foodList.updateInput("", "");
 
-    //delete the selectedMarker and redraw the map
-    for(marker in markers){
-        if (marker-1 == selectedMarker.id){
-            // foodshareRef.child(selectedMarker.key).remove();
-            $.ajax({url: "/foodDelete",
-                type: 'DELETE',
-                data: { key: selectedMarker.key}});
-            return selectedMarker.text;
-        }
-    }
+    //delete the selectedMarker
+    $.ajax({url: "/foodDelete",
+        type: 'DELETE',
+        data: { key: selectedMarker.key}});
 }
 
 
@@ -313,34 +302,30 @@ function addUpdateMarker(text, tag, img) {
 
     //if we are updating the text of a selected marker
     if (selectedMarker){
-        for(key in markers) {
-            if (key - 1 == selectedMarker.id) {
-                selectedMarker.text = markerText;
-                selectedMarker.tag = markerTag;
-                //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
+        selectedMarker.text = markerText;
+        selectedMarker.tag = markerTag;
+        //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
 
-                console.log("tag is: " + selectedMarker.tag);
+        console.log("tag is: " + selectedMarker.tag);
 
-                var formData = new FormData();
-                if(img) formData.append('img', img, img.name);
-                formData.append('key',selectedMarker.key);
-                formData.append('food',markerText);
-                formData.append('lat',latLng.lat());
-                formData.append('lng',latLng.lng());
-                formData.append('uid',uid);
-                formData.append('tag',markerTag);
+        var formData = new FormData();
+        if(img) formData.append('img', img, img.name);
+        formData.append('key',selectedMarker.key);
+        formData.append('food',markerText);
+        formData.append('lat',latLng.lat());
+        formData.append('lng',latLng.lng());
+        formData.append('uid',uid);
+        formData.append('tag',markerTag);
 
-                $.ajax({
-                    url: "/foodEdit",
-                    type: "PUT",
-                    data: formData,
-                    processData: false,
-                    contentType: false
-                });
+        $.ajax({
+            url: "/foodEdit",
+            type: "PUT",
+            data: formData,
+            processData: false,
+            contentType: false
+        });
 
-                return;
-            }
-        }
+        return;
     }
     else if(pointerMarker != null) {
         pointerMarker.setMap(null);

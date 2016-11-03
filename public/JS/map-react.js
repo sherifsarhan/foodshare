@@ -8,14 +8,13 @@ fireRef.on("child_added", function(v){
     if(v.val().img) createFood(v.val().food, v.val().img, v.val().lat, v.val().lng);
 });
 
+
 $('#foodItems').on('click', "#selectCardImage", function () {
     //only one food item description should be open at time
     var closeButtonParent = $(this).find('div.card-content').child;
     $('i.material-icons.right').filter(function () {
         return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
     }).trigger('click');
-    console.log($(this).data('lat'));
-    console.log($(this).data('lng'));
     pos = {
         lat: $(this).data('lat'),
         lng: $(this).data('lng')
@@ -23,7 +22,6 @@ $('#foodItems').on('click', "#selectCardImage", function () {
     map.setCenter(pos);
 });
 
-var firstRun = true;
 function createFood(text, img, lat, lng)
 {
     if(img)
@@ -62,11 +60,6 @@ function createFood(text, img, lat, lng)
         '</div>'+
     '</div>'
         );
-
-    if(firstRun){
-
-        firstRun = false;
-    }
 }
 $('#newItemForm').submit(function(e)
 {
