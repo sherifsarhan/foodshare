@@ -152,19 +152,21 @@ class NavBar extends React.Component{
 
     render() {
         return(
-            <div>
+            <div style={{height:"100%"}}>
                 <nav className="navbar navbar-light bg-faded">
-                    <ul className="nav navbar-nav">
-                        <li className="nav-item">
+                    <ul className="nav navbar-nav" style={{height:"100%", position: "relative"}}>
+                        <li className="nav-item" style={{height:"100%"}}>
                             {this.state.loginState ?
-                                <a className="nav-link whitetext" onClick={this.handleLogout}>
+                                <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
+                                   className="nav-link whitetext" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
                                 </a>
                             :
                                 <Modal className="loginModal" id="modal1"
                                 header='Login and Registration'
                                 trigger={
-                                <Button ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
+                                <Button style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
+                                        ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
                                 }>
                                 <LoginBox loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
                                           email={this.state.email} onEmailChange={this.onEmailChange}

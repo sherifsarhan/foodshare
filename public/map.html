@@ -41,19 +41,16 @@ will record this data.-->
 
 <!--<body background="EXTRAS/6942095-abstract-background-wallpaper.jpg">-->
 <body>
-  <div class="navbar-container">
-    <div class="navbar-height" id="login"></div>
-  </div>
+  <div id="login"></div>
   <div class="row" id="page-container">
     <div class="sidebar col s3">
       <div id="list-container"></div>
+
       <div id="foodItems"></div>
-      <form id="newItemForm" action="/food" method="post" enctype="multipart/form-data"><input type="text" id="newfood" name="foodText" /><input type="file" id="newFile" name="img" /><input type="submit" value="New" /></form>
+
     </div>
-    <div class="col s9">
-      <div id="map-container">
+    <div class="map-container col s9">
         <div id="map"></div>
-      </div>
     </div>
   </div>
 
@@ -62,6 +59,9 @@ will record this data.-->
   <!--Import Google Maps-->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaLT-2yZGBOd4O9teeuXSA-vvdtbPzkiI&callback=initMap"></script>
   <link rel="stylesheet" href="CSS/map.css?v=1.0">
+  <!--remove localhost:8080/public/ when ready for production-->
+  <!--<script src="http://localhost:8080/public/JS/map-react.min.js"></script>-->
+  <!--<script src="http://localhost:8080/public/JS/login-react.min.js"></script>-->
   <script src="JS/map-react.min.js"></script>
   <script src="JS/login-react.min.js"></script>
 

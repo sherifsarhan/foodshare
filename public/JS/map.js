@@ -33,16 +33,91 @@ var selectedMarker;
 var submitClicked = false;
 var latLng;
 var markers = {};
+var markersTest = {};
 var map;
 var count=0;
 var pointerMarker;
+var pos;
 //--------------GOOGLE MAPS-----------------
+/**
+ * The CenterControl adds a control to the map that recenters the map on
+ * Chicago.
+ * This constructor takes the control DIV as an argument.
+ * @constructor
+ */
+getLocation();
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getCoordinates);
+    } else {
+        alert("4");
+    }
+}
+
+function getCoordinates(position) {
+    pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+    };
+}
+
+function CenterControl(controlDiv, map) {
+
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginBottom = '22px';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click to recenter the map';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.color = 'rgb(25,25,25)';
+    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    controlText.style.fontSize = '16px';
+    controlText.style.lineHeight = '38px';
+    controlText.style.paddingLeft = '5px';
+    controlText.style.paddingRight = '5px';
+    controlText.innerHTML = 'Center Map';
+    controlUI.appendChild(controlText);
+
+    // Setup the click event listeners: simply set the map to Chicago.
+    controlUI.addEventListener('click', function() {
+        getLocation();
+        map.setCenter(pos);
+
+        var mev = {
+            stop: null,
+            latLng: new google.maps.LatLng(pos.lat, pos.lng)
+        };
+        google.maps.event.trigger(map, 'click', mev);
+    });
+
+}
+
 function initMap() {
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
     var mapDiv = document.getElementById('map');
     map = new google.maps.Map(mapDiv, {
         center: {lat: 38.8320, lng: -77.3116},
         zoom: 16
     });
+    directionsDisplay.setMap(map);
+
+    // Create the DIV to hold the control and call the CenterControl()
+    // constructor passing in this DIV.
+    var centerControlDiv = document.createElement('div');
+    var centerControl = new CenterControl(centerControlDiv, map);
+
+    centerControlDiv.index = 1;
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
 
     // every time the map is clicked on,
     // a pin is dropped and the previous pin is removed
@@ -105,23 +180,17 @@ foodshareRef.on('child_changed', function(data) {
 
 //if a foodshare gets deleted from the firebase db
 foodshareRef.on('child_removed', function(data) {
-    for(marker in markers){
-        if(markers[marker].key == data.key){
-            markers[marker].setMap(null);
-            markers[marker] = null;
-            delete markers[marker];
-            break;
-        }
-    }
+//    TEST MARKER AREA
+    markersTest[data.key].setMap(null);
+    markersTest[data.key] = null;
+    delete markersTest[data.key];
 });
 
 
 var tags = {};
 var foodCount = 0;
 foodshareRef.on("child_added", function(data){
-    if(data.val().img) return;
-    // foodCountDB = data.numChildren();
-    // console.log(foodCountDB);
+    if(!data.val().lat || !data.val().lng) return;
 
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
@@ -144,6 +213,7 @@ foodshareRef.on("child_added", function(data){
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
     markers[count] = tempMarker;
+    markersTest[data.key] = tempMarker;
 
     // // creates the info window for the marker
     var infoWindow = new google.maps.InfoWindow({
@@ -216,63 +286,69 @@ $(document).ready(function() {
 });
 
 function deleteMarker (){
-    // $('.foodInfo').val("");
     foodList.updateInput("", "");
 
-    //delete the selectedMarker and redraw the map
-    for(marker in markers){
-        if (marker-1 == selectedMarker.id){
-            // foodshareRef.child(selectedMarker.key).remove();
-            $.ajax({url: "http://localhost:5000/foodDelete",
-                type: 'DELETE',
-                data: { key: selectedMarker.key}});
-            return selectedMarker.text;
-        }
-    }
+    //delete the selectedMarker
+    $.ajax({url: "/foodDelete",
+        type: 'DELETE',
+        data: { key: selectedMarker.key}});
 }
 
 
 //---------functions to be used by react visuals-----
-function addUpdateMarker(text, tag) {
+function addUpdateMarker(text, tag, img) {
     var markerText = text;
     var markerTag = tag;
 
     //if we are updating the text of a selected marker
     if (selectedMarker){
-        for(key in markers) {
-            if (key - 1 == selectedMarker.id) {
-                selectedMarker.text = markerText;
-                selectedMarker.tag = markerTag;
-                //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
+        selectedMarker.text = markerText;
+        selectedMarker.tag = markerTag;
+        //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
 
-                console.log("tag is: " + selectedMarker.tag);
-                $.ajax({url: "http://localhost:5000/foodEdit",
-                    type: 'PUT',
-                    data:
-                    {key: selectedMarker.key,
-                    food: selectedMarker.text,
-                    lat : selectedMarker.position.lat(),
-                    lng : selectedMarker.position.lng(),
-                    uid : selectedMarker.uid,
-                    tag : selectedMarker.tag}});
+        console.log("tag is: " + selectedMarker.tag);
 
-                return;
-            }
-        }
+        var formData = new FormData();
+        if(img) formData.append('img', img, img.name);
+        formData.append('key',selectedMarker.key);
+        formData.append('food',markerText);
+        formData.append('lat',latLng.lat());
+        formData.append('lng',latLng.lng());
+        formData.append('uid',uid);
+        formData.append('tag',markerTag);
+
+        $.ajax({
+            url: "/foodEdit",
+            type: "PUT",
+            data: formData,
+            processData: false,
+            contentType: false
+        });
+
+        return;
     }
     else if(pointerMarker != null) {
         pointerMarker.setMap(null);
         pointerMarker = null;
         selectedMarker = null;
     }
-    $.post("http://localhost:5000/foodAdd",
-        {
-            food: markerText,
-            lat: latLng.lat(),
-            lng: latLng.lng(),
-            uid: uid,
-            tag: markerTag
-        });
+    var formData = new FormData();
+    if(img) formData.append('img', img, img.name);
+    formData.append('food',markerText);
+    formData.append('lat',latLng.lat());
+    formData.append('lng',latLng.lng());
+    formData.append('uid',uid);
+    formData.append('tag',markerTag);
+
+    // console.log(formData);
+    $.ajax({
+        url: "/foodAdd",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false
+    });
+
     submitClicked = true;
 }
 

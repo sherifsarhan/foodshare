@@ -73,8 +73,14 @@ function sendUploadToGCS (req, res, next) {
 var fireRef = firebase.database().ref('foodshare');
 
 //Make a new one
-app.post('/food', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
-    var data = {"text" : req.body.foodText};
+app.post('/foodAdd', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
+    var data = {
+        food: req.body.food,
+        lat : parseFloat(req.body.lat),
+        lng : parseFloat(req.body.lng),
+        uid : req.body.uid,
+        tag : req.body.tag
+    };
     if(req.file)
         data.img = getPublicUrl(req.file.cloudStorageObject);
     fireRef.push(data, function () {
@@ -91,28 +97,22 @@ app.get('/', function (req, res) {
     res.sendFile('public/map.html', {root: __dirname});
 });
 
-//Add a new foodshare
-app.post('/foodAdd', function (req,res) {
-    console.log("Adding food");
-    fireRef.push({
-        food: req.body.food,
-        lat : parseFloat(req.body.lat),
-        lng : parseFloat(req.body.lng),
-        uid : req.body.uid,
-        tag : req.body.tag
-    });
-    res.send("OK!");
-});
 
 //Edit a foodshare
-app.put('/foodEdit', function (req,res) {
+app.put('/foodEdit', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
     console.log("Editing food: " + req.body.key);
+
+    var img = null;
+    if(req.file) img = getPublicUrl(req.file.cloudStorageObject);
+
     //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
     fireRef.child(req.body.key).set({
+        'img' : img,
         'food': req.body.food,
         'lat' : parseFloat(req.body.lat),
         'lng' : parseFloat(req.body.lng),
-        'uid' : req.body.uid
+        'uid' : req.body.uid,
+        'tag' : req.body.tag
         });
     res.send("OK!");
 });

@@ -5,21 +5,60 @@ var ReactTestUtils = require('react-addons-test-utils');
 
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    if(v.val().img) createFood(v.val().text, v.val().img);
+    if(v.val().img) createFood(v.val().food, v.val().img, v.val().lat, v.val().lng);
 });
 
-function createFood(text, img)
+
+$('#foodItems').on('click', "#selectCardImage", function () {
+    //only one food item description should be open at time
+    var closeButtonParent = $(this).find('div.card-content').child;
+    $('i.material-icons.right').filter(function () {
+        return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
+    }).trigger('click');
+    pos = {
+        lat: $(this).data('lat'),
+        lng: $(this).data('lng')
+    };
+    map.setCenter(pos);
+});
+
+function createFood(text, img, lat, lng)
 {
     if(img)
     {
-        $('#foodItems').append(
-            '<div id="foodItem" class="foodItem"><img src="'+img+'" /><br/>'+text+'</div>'
+        $('#foodItems').prepend(
+            '<div id="foodItem" class="foodItem">' +
+                '<div class="card">'+
+                    '<div id="selectCardImage" data-lat='+lat+' data-lng='+lng+' class="card-image waves-effect waves-block waves-light">'+
+                        '<img class="activator" src="'+img+'">'+
+                    '</div>'+
+                    '<div class="card-content">'+
+                        '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
+                        '<p><a href="#">This is a link</a></p>'+
+                    '</div>'+
+                    '<div class="card-reveal">'+
+                        '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
+                        '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'
         );
-        console.log("added img");
+        // console.log("added img");
     }
     else
-        $('#foodItems').append(
-            '<div class="foodItem">'+text+'</div>'
+        $('#foodItems').prepend(
+    '<div id="foodItem" class="foodItem">' +
+        '<div class="card">'+
+            '<div class="card-content">'+
+                '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
+                '<p><a href="#">This is a link</a></p>'+
+            '</div>'+
+            '<div class="card-reveal">'+
+                '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
+                '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+            '</div>'+
+        '</div>'+
+    '</div>'
         );
 }
 $('#newItemForm').submit(function(e)
@@ -46,11 +85,9 @@ var FoodListItems = React.createClass({
     }
 });
 
-// var itemsHash = {};
-// var idxCount = 0;
 var FoodListApp = React.createClass({
     getInitialState: function() {
-        return {items: [], text: '', tag: ''};
+        return {items: [], text: '', tag: '', img: '', imgPreview: false};
     },
     componentDidMount: function(){
         getFoodList(this);
@@ -69,11 +106,10 @@ var FoodListApp = React.createClass({
         // }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
-        // itemsHash[count] = this.state.text;
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
-        addUpdateMarker(this.state.text, this.state.tag);
-        this.setState({tag: ''});
+        addUpdateMarker(this.state.text, this.state.tag, this.state.img);
+        this.setState({tag: '', imgPreview: false});
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
@@ -88,8 +124,10 @@ var FoodListApp = React.createClass({
         delete this.state.items[deleteItem];
     },
     submission: function(e) {
-        this.handleAdd(e);
         e.preventDefault();
+    },
+    handleImageChange: function(image) {
+        this.setState({img: image, imgPreview: true})
     },
     render: function() {
         return (
@@ -99,12 +137,13 @@ var FoodListApp = React.createClass({
         <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
         <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
 
+        <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
+
         <Row>
-            <Button type="button" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
-            <Button type="button" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
+            <Button type="submit" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
+            <Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
         </Row>
         </form>
-        {/*<ImageUpload></ImageUpload>*/}
         </div>
         );
     }
@@ -114,21 +153,26 @@ var FoodListApp = React.createClass({
 class ImageUpload extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {file: '',imagePreviewUrl: ''};
+        this.state = {file: '',
+            imagePreviewUrl: '',
+            foodText: 'test'
+        };
     }
 
     _handleSubmit(e) {
         e.preventDefault();
         // food: do something with -> this.state.file
-        console.log('handle uploading-', this.state.file);
+        // console.log('handle uploading-', this.state.file);
         var formData = new FormData();
-        formData.append('photo', this.state.file, this.state.file.name);
-        console.log(formData);
+        formData.append('img', this.state.file, this.state.file.name);
+        formData.append('foodText',this.state.foodText);
+        // console.log(formData);
         $.ajax({
-            url: "http://localhost:5000/uploadPic",
+            url: "/food",
             type: "POST",
             data: formData,
-            processData: false
+            processData: false,
+            contentType: false
         });
     }
 
@@ -143,27 +187,33 @@ class ImageUpload extends React.Component {
                 file: file,
                 imagePreviewUrl: reader.result
             });
+            this.props.handleImageChange(this.state.file);
         };
 
         reader.readAsDataURL(file);
+
     }
 
     render() {
         let {imagePreviewUrl} = this.state;
         let $imagePreview = null;
-        if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} />);
+        if (this.props.imgPreview) {
+            $imagePreview = (<img style={{width: "100%",height: "100%",display: "block", margin: "auto"}}
+                                  src={imagePreviewUrl} />);
+            $('#getFile').val(this.state.file.filename);
+
         } else {
             $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+            $('#getFile').val("");
         }
 
         return (
             <div className="previewComponent">
-                <form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>
-                    <input className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
-                    <button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>
-                </form>
-                <div className="imgPreview">
+                {/*<form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>*/}
+                    <input id="getFile" className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
+                    {/*<button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>*/}
+                {/*</form>*/}
+                <div className="imgPreview foodItem">
                     {$imagePreview}
                 </div>
             </div>
