@@ -9,33 +9,36 @@ fireRef.on("child_added", function(v){
 });
 
 var currentlyRevealedParent;
-$('#foodItems').on('click', ".card", function () {
+$('#foodItems').on('click', ".activator", function () {
     // only one food item description should be open at time
-    //if something is currently revealed
-    //and it's not the same as what the user has just clicked on
-    // if(currentlyRevealedParent && currentlyRevealedParent.parent().parent() != $(this)){
-    //     //hide it
-    //     currentlyRevealedParent.find('i.material-icons.right').trigger('click');
-    // }
-    // else{
-    //     currentlyRevealedParent = $(this).find('div.card-title');
-    // }
+    //Is a foodshare description currently open?
+    if(currentlyRevealedParent){
+        //Yes there is, hide it please.
+        $(currentlyRevealedParent).find('i.material-icons.right').filter(function () {
+            return $(this).text() == 'close';
+        }).trigger('click');
+    }
+    //Set this current foodshare description as the one that's visible
+    //check if an image has been clicked or not
+    var foodMarker;
+    if($(this).is("img")){
+        currentlyRevealedParent = $(this).parent().siblings('div.card-reveal').children()[0];
+        foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
+    }
+    else if($(this).is("span")){
+        currentlyRevealedParent = $(this).parent().parent().siblings('div.card-reveal').children()[0];
+        foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
+    }
+    else{
+        currentlyRevealedParent = $(this).siblings('div.card-reveal').children()[0];
+        foodMarker = markersTest[$(this).parent().parent().data('key')];
+    }
 
-    // $('i.material-icons.right').filter(function () {
-    //     return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
-    // }).trigger('click');
-
-    var foodMarker = markersTest[$(this).parent().data('key')];
     pos = {
         lat:    foodMarker.lat,
         lng:    foodMarker.lng
     };
     map.setCenter(pos);
-
-    // var parentFoodItem = $(this).parent();
-    // console.log(parentFoodItem.data('key'));
-    // parentFoodItem.remove();
-
 });
 
 function createFood(text, img, lat, lng, key)
@@ -44,12 +47,13 @@ function createFood(text, img, lat, lng, key)
     {
         $('#foodItems').prepend(
             '<div id="foodItem" data-key='+key+' class="foodItem">' +
-                '<div class="card activator">'+
+                '<div class="card">'+
                     '<div data-lat='+lat+' data-lng='+lng+' data-key='+key+' class="card-image waves-effect waves-block waves-light">'+
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
-                        '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
+                        '<i class="material-icons right ">more_vert</i>'+
+                        '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
                         '<p><a href="#">This is a link</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
@@ -64,9 +68,10 @@ function createFood(text, img, lat, lng, key)
     else
         $('#foodItems').prepend(
     '<div id="foodItem" data-key='+key+' class="foodItem">' +
-        '<div class="card activator">'+
+        '<div class="card">'+
             '<div class="card-content">'+
-                '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
+                '<i class="material-icons right">more_vert</i>'+
+                '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
                 '<p><a href="#">This is a link</a></p>'+
             '</div>'+
             '<div class="card-reveal">'+
@@ -253,6 +258,16 @@ $(".btn").mouseup(function(){
     $(this).blur();
 });
 
+$('.dropdown-button').dropdown({
+        inDuration: 300,
+        outDuration: 225,
+        constrain_width: false, // Does not change width of dropdown to that of the activator
+        hover: true, // Activate on hover
+        gutter: 0, // Spacing from edge
+        belowOrigin: false, // Displays dropdown below the button
+        alignment: 'left' // Displays dropdown with edge aligned to the left of button
+    }
+);
 
 // describe('FoodListApp', function() {
 //     var foodListAppComponent, element;

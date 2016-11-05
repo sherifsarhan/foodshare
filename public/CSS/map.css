@@ -6,6 +6,10 @@ html, body{
     right:0;
 }
 
+.card .card-content .card-title {
+     line-height: 32px;
+}
+
 nav {
     color: #fff;
     background-color: #ee6e73;
