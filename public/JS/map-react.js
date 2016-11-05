@@ -41,6 +41,14 @@ $('#foodItems').on('click', ".activator", function () {
     map.setCenter(pos);
 });
 
+$('#foodItems').on('click', '.dropdown-button', function() {
+    //delete the selectedMarker
+    $.ajax({url: "/foodDelete",
+        type: 'DELETE',
+        data: { key: $(this).data('activates')}});
+    $(this).parent().parent().parent().remove();
+});
+
 function createFood(text, img, lat, lng, key)
 {
     if(img)
@@ -52,7 +60,11 @@ function createFood(text, img, lat, lng, key)
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
-                        '<i class="material-icons right ">more_vert</i>'+
+                            '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
+                            '<i class="material-icons right">delete</i></a>'+
+                            '<ul id='+key+' class="dropdown-content">'+
+                                '<li><a href="#!">one</a></li>'+
+                            '</ul>'+
                         '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
                         '<p><a href="#">This is a link</a></p>'+
                     '</div>'+
@@ -70,7 +82,11 @@ function createFood(text, img, lat, lng, key)
     '<div id="foodItem" data-key='+key+' class="foodItem">' +
         '<div class="card">'+
             '<div class="card-content">'+
-                '<i class="material-icons right">more_vert</i>'+
+                '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
+                '<i class="material-icons right">delete</i></a>'+
+                '<ul id='+key+' class="dropdown-content">'+
+                '<li><a href="#!">one</a></li>'+
+                '</ul>'+
                 '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
                 '<p><a href="#">This is a link</a></p>'+
             '</div>'+
@@ -132,11 +148,11 @@ var FoodListApp = React.createClass({
             return;
         }
 
-        var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
+        // var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
         var nextText = '';
-        this.setState({items: nextItems, text: nextText});
+        // this.setState({items: nextItems, text: nextText});
         addUpdateMarker(this.state.text, this.state.tag, this.state.img);
-        this.setState({tag: '', imgPreview: false, img: null});
+        this.setState({text: '', tag: '', imgPreview: false, img: null});
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
@@ -258,16 +274,19 @@ $(".btn").mouseup(function(){
     $(this).blur();
 });
 
-$('.dropdown-button').dropdown({
-        inDuration: 300,
-        outDuration: 225,
-        constrain_width: false, // Does not change width of dropdown to that of the activator
-        hover: true, // Activate on hover
-        gutter: 0, // Spacing from edge
-        belowOrigin: false, // Displays dropdown below the button
-        alignment: 'left' // Displays dropdown with edge aligned to the left of button
-    }
-);
+$( document ).ready(function() {
+    $('.dropdown-button').dropdown({
+            inDuration: 300,
+            outDuration: 225,
+            constrain_width: false, // Does not change width of dropdown to that of the activator
+            hover: true, // Activate on hover
+            gutter: 0, // Spacing from edge
+            belowOrigin: false, // Displays dropdown below the button
+            alignment: 'left' // Displays dropdown with edge aligned to the left of button
+        }
+    );
+});
+
 
 // describe('FoodListApp', function() {
 //     var foodListAppComponent, element;
