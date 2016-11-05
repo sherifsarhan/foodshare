@@ -5,31 +5,47 @@ var ReactTestUtils = require('react-addons-test-utils');
 
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    if(v.val().img) createFood(v.val().food, v.val().img, v.val().lat, v.val().lng);
+    createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key);
 });
 
+var currentlyRevealedParent;
+$('#foodItems').on('click', ".card", function () {
+    // only one food item description should be open at time
+    //if something is currently revealed
+    //and it's not the same as what the user has just clicked on
+    // if(currentlyRevealedParent && currentlyRevealedParent.parent().parent() != $(this)){
+    //     //hide it
+    //     currentlyRevealedParent.find('i.material-icons.right').trigger('click');
+    // }
+    // else{
+    //     currentlyRevealedParent = $(this).find('div.card-title');
+    // }
 
-$('#foodItems').on('click', "#selectCardImage", function () {
-    //only one food item description should be open at time
-    var closeButtonParent = $(this).find('div.card-content').child;
-    $('i.material-icons.right').filter(function () {
-        return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
-    }).trigger('click');
+    // $('i.material-icons.right').filter(function () {
+    //     return $(this).text() == 'close' && $(this).parent() != closeButtonParent;
+    // }).trigger('click');
+
+    var foodMarker = markersTest[$(this).parent().data('key')];
     pos = {
-        lat: $(this).data('lat'),
-        lng: $(this).data('lng')
+        lat:    foodMarker.lat,
+        lng:    foodMarker.lng
     };
     map.setCenter(pos);
+
+    // var parentFoodItem = $(this).parent();
+    // console.log(parentFoodItem.data('key'));
+    // parentFoodItem.remove();
+
 });
 
-function createFood(text, img, lat, lng)
+function createFood(text, img, lat, lng, key)
 {
     if(img)
     {
         $('#foodItems').prepend(
-            '<div id="foodItem" class="foodItem">' +
-                '<div class="card">'+
-                    '<div id="selectCardImage" data-lat='+lat+' data-lng='+lng+' class="card-image waves-effect waves-block waves-light">'+
+            '<div id="foodItem" data-key='+key+' class="foodItem">' +
+                '<div class="card activator">'+
+                    '<div data-lat='+lat+' data-lng='+lng+' data-key='+key+' class="card-image waves-effect waves-block waves-light">'+
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
@@ -47,8 +63,8 @@ function createFood(text, img, lat, lng)
     }
     else
         $('#foodItems').prepend(
-    '<div id="foodItem" class="foodItem">' +
-        '<div class="card">'+
+    '<div id="foodItem" data-key='+key+' class="foodItem">' +
+        '<div class="card activator">'+
             '<div class="card-content">'+
                 '<span class="card-title activator grey-text text-darken-4">'+text+'<i class="material-icons right">more_vert</i></span>'+
                 '<p><a href="#">This is a link</a></p>'+
@@ -105,11 +121,17 @@ var FoodListApp = React.createClass({
         //     return;
         // }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
+        //check to see if a location has been selected and that text has been added to the food form
+        if(!latLng || this.state.text == ''){
+            console.log("Please either select a location or enter in the food text");
+            return;
+        }
+
         var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
         addUpdateMarker(this.state.text, this.state.tag, this.state.img);
-        this.setState({tag: '', imgPreview: false});
+        this.setState({tag: '', imgPreview: false, img: null});
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
@@ -125,6 +147,7 @@ var FoodListApp = React.createClass({
     },
     submission: function(e) {
         e.preventDefault();
+        $('#foodForm').trigger("reset");
     },
     handleImageChange: function(image) {
         this.setState({img: image, imgPreview: true})
@@ -133,7 +156,7 @@ var FoodListApp = React.createClass({
         return (
             <div>
             <FoodListItems items={this.state.items} />
-        <form onSubmit={this.submission}>
+        <form id="foodForm" onSubmit={this.submission}>
         <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
         <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
 
@@ -200,17 +223,18 @@ class ImageUpload extends React.Component {
         if (this.props.imgPreview) {
             $imagePreview = (<img style={{width: "100%",height: "100%",display: "block", margin: "auto"}}
                                   src={imagePreviewUrl} />);
-            $('#getFile').val(this.state.file.filename);
+            // $('#getFile').val(this.state.file.filename);
 
         } else {
-            $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
-            $('#getFile').val("");
+            // $imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+            // $('#getFile').val("");
+            // $('#getFile').reset();
         }
 
         return (
             <div className="previewComponent">
                 {/*<form id="foodForm" encType="multipart/form-data" onSubmit={(e)=>this._handleSubmit(e)}>*/}
-                    <input id="getFile" className="fileInput" type="file" name="foodText" onChange={(e)=>this._handleImageChange(e)} />
+                    <input id="getFile" className="fileInput" type="file" title=" " name="foodText" onChange={(e)=>this._handleImageChange(e)} />
                     {/*<button className="submitButton" type="submit" onClick={(e)=>this._handleSubmit(e)}>Upload Image</button>*/}
                 {/*</form>*/}
                 <div className="imgPreview foodItem">
@@ -222,6 +246,12 @@ class ImageUpload extends React.Component {
 }
 
 var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
+
+//the add and delete buttons have a problem.
+//when clicked, they stay focused, and don't blur again. this fixes it.
+$(".btn").mouseup(function(){
+    $(this).blur();
+});
 
 
 // describe('FoodListApp', function() {
