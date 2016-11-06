@@ -47,6 +47,8 @@ class NavBar extends React.Component{
 
         this.hideError = this.hideError.bind(this);
         this.hideSuccess = this.hideSuccess.bind(this);
+
+        this.closeModal = this.closeModal.bind(this);
     }
 
     setDefaultState(){
@@ -84,16 +86,14 @@ class NavBar extends React.Component{
                 if(success) {
                     console.log("SUCCESS LOGIN");
                     stateObj.setState({showError: false, success: " Signed in!", showSuccess: true});
-
-                    // need to keep track that user is logged in
-                    // and also Hide the login box
-                    //console.log($('#modal1').html());
-                    $('#modal1').closeModal();
-
-
-                    stateObj.setState({loginState: true, showLoginBox: false, currentUser: stateObj.state.email});
+                    stateObj.closeModal();
                 }
             });
+    }
+
+    closeModal(){
+        $('#modal1').closeModal();
+        this.setState({loginState: true, showLoginBox: false, currentUser: this.state.email});
     }
 
     registerHandler(e) {
@@ -168,7 +168,8 @@ class NavBar extends React.Component{
                                 <Button style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
                                         ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
                                 }>
-                                <LoginBox loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
+                                <LoginBox closeModal={this.closeModal} loginState={this.state.loginState} currentUser={this.state.currentUser}
+                                          loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
                                           email={this.state.email} onEmailChange={this.onEmailChange}
                                           password={this.state.password} onPasswordChange={this.onPasswordChange}
                                           showError={this.state.showError} error={this.state.error}
@@ -189,7 +190,7 @@ class NavBar extends React.Component{
     }
 }
 
-
+var provider = new firebase.auth.GoogleAuthProvider();
 class LoginBox extends React.Component{
     constructor(props) {
         super(props);
@@ -198,6 +199,7 @@ class LoginBox extends React.Component{
             loginState: false, currentUser: ""};
         this.onLoginHandler = this.onLoginHandler.bind(this);
         this.onRegisterHandler = this.onRegisterHandler.bind(this);
+        this.onGoogleSignin = this.onGoogleSignin.bind(this);
     };
 
     handleOnEmailChange(e){
@@ -222,6 +224,30 @@ class LoginBox extends React.Component{
     onRegisterHandler(e){
         this.props.registerHandler(e);
     }
+    onGoogleSignin(e){
+        var stateObj = this;
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user);
+            stateObj.props.onEmailChange(user.email);
+            stateObj.props.closeModal();
+            // $('#modal1').closeModal();
+
+            // ...
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+        });
+    }
 
     render() {
         return(
@@ -242,13 +268,13 @@ class LoginBox extends React.Component{
                             : null}
                     </Row>
                     <Row>
-                        {/*<Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        {/*<Button className="lgnBtn" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        <Button className="lgnBtn" onClick={this.onLoginHandler} type="button">LOGIN</Button>
+                        <Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler} type="button">LOGIN</Button>
                     </Row>
                     <Row>
-                        {/*<Button className="col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>*/}
-                        <Button className="regBtn" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
+                        <Button className="regBtn col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
+                    </Row>
+                    <Row>
+                        <Button className="col s12 orange accent-4" onClick={this.onGoogleSignin} type="button">Google Signin</Button>
                     </Row>
                 </form>
             </Row>

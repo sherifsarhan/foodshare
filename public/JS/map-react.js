@@ -51,6 +51,8 @@ $('#foodItems').on('click', '.dropdown-button', function() {
 
 function createFood(text, img, lat, lng, key)
 {
+    //TODO: CHECK TO SEE IF USER IS LOGGED IN, ONLY ALLOW DELETE BUTTON TO SHOW UP ON USER'S OWN SHARES
+    //TODO: OTHERWISE, SHOW THE REPORT BUTTON
     if(img)
     {
         $('#foodItems').prepend(
@@ -184,8 +186,8 @@ var FoodListApp = React.createClass({
         <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
 
         <Row>
-            <Button type="submit" className="col s6 addBtn" onClick={this.handleAdd}>Add</Button>
-            <Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>
+            <Button type="submit" className="col s6 addBtn light-green accent-4" onClick={this.handleAdd}>Add</Button>
+            {/*<Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>*/}
         </Row>
         </form>
         </div>
@@ -274,7 +276,7 @@ $(".btn").mouseup(function(){
     $(this).blur();
 });
 
-$( document ).ready(function() {
+$(document).ready(function() {
     $('.dropdown-button').dropdown({
             inDuration: 300,
             outDuration: 225,
