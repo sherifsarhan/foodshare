@@ -8,6 +8,21 @@ fireRef.on("child_added", function(v){
     createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key);
 });
 
+var signedIn;
+var uid;
+//get user info if they're signed in
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        uid = user.uid;
+        signedIn = true;
+    } else {
+        // No user is signed in.
+        uid = null;
+        signedIn = false;
+    }
+});
+
 var currentlyRevealedParent;
 $('#foodItems').on('click', ".activator", function () {
     // only one food item description should be open at time
@@ -139,10 +154,10 @@ var FoodListApp = React.createClass({
     },
     handleAdd: function() {
         // console.log(checkLoggedIn());
-        // if(!checkLoggedIn()){
-        //     alert("You must be signed in to add a FoodShare!");
-        //     return;
-        // }
+        if(!signedIn){
+            alert("You must be signed in to add a FoodShare!");
+            return;
+        }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         //check to see if a location has been selected and that text has been added to the food form
         if(!latLng || this.state.text == ''){
@@ -186,7 +201,7 @@ var FoodListApp = React.createClass({
         <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
 
         <Row>
-            <Button type="submit" className="col s6 addBtn light-green accent-4" onClick={this.handleAdd}>Add</Button>
+            <Button type="submit" className="col s12 addBtn light-green accent-4" onClick={this.handleAdd}>Add</Button>
             {/*<Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>*/}
         </Row>
         </form>

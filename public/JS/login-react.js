@@ -18,24 +18,12 @@ var ReactTestUtils = require('react-addons-test-utils');
 //
 // var foodshareRef = firebase.database().ref("foodshare");
 
-var signedIn = false;
-var uid = "testa";
-//get user info if they're signed in
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        // User is signed in.
-        uid = user.uid;
-    } else {
-        // No user is signed in.
-    }
-});
-
 class NavBar extends React.Component{
     constructor(props){
         super(props);
         this.state = {email: "", password: "", showError: false, error: "",
             success: "", showSuccess: false, showLoginBox: true,
-            loginState: false, currentUser: ""};
+            loginState: false, currentUser: "", uid: ''};
 
         this.loginHandler = this.loginHandler.bind(this);
         this.registerHandler = this.registerHandler.bind(this);
@@ -49,6 +37,21 @@ class NavBar extends React.Component{
         this.hideSuccess = this.hideSuccess.bind(this);
 
         this.closeModal = this.closeModal.bind(this);
+
+        var uid;
+        var stateObj = this;
+        //get user info if they're signed in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in.
+                // uid = user.uid;
+                stateObj.setState({currentUser: user.email, loginState: true, uid: user.uid});
+            } else {
+                // No user is signed in.
+                stateObj.setState({currentUser: '', loginState: false, uid: ''});
+            }
+        });
+
     }
 
     setDefaultState(){
@@ -149,6 +152,8 @@ class NavBar extends React.Component{
     hideSuccess(){
         this.setState({showSuccess: false});
     }
+
+
 
     render() {
         return(
