@@ -5,23 +5,23 @@ var ReactTestUtils = require('react-addons-test-utils');
 
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key);
+    createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key, v.val().uid);
 });
 
-var signedIn;
-var uid;
-//get user info if they're signed in
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        // User is signed in.
-        uid = user.uid;
-        signedIn = true;
-    } else {
-        // No user is signed in.
-        uid = null;
-        signedIn = false;
-    }
-});
+// var signedIn;
+// var uid;
+// //get user info if they're signed in
+// firebase.auth().onAuthStateChanged(function(user) {
+//     if (user) {
+//         // User is signed in.
+//         uid = user.uid;
+//         signedIn = true;
+//     } else {
+//         // No user is signed in.
+//         uid = null;
+//         signedIn = false;
+//     }
+// });
 
 var currentlyRevealedParent;
 $('#foodItems').on('click', ".activator", function () {
@@ -64,24 +64,35 @@ $('#foodItems').on('click', '.dropdown-button', function() {
     $(this).parent().parent().parent().remove();
 });
 
-function createFood(text, img, lat, lng, key)
+function createFood(text, img, lat, lng, key, foodUID)
 {
     //TODO: CHECK TO SEE IF USER IS LOGGED IN, ONLY ALLOW DELETE BUTTON TO SHOW UP ON USER'S OWN SHARES
     //TODO: OTHERWISE, SHOW THE REPORT BUTTON
+
+    var foodDiv;
+    if(foodUID = uid) foodDiv = '#myfoodItems';
+    else foodDiv = '#foodItems';
+
+    var contentButtonHTML;
+    if(signedIn) {
+        contentButtonHTML = '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
+            '<i class="material-icons right">delete</i></a>';
+    }
+    else{
+        contentButtonHTML = '<a class="dropdown-button btn teal accent-3 right" href="#" data-activates='+key+'>Delete'+
+            '<i class="material-icons right">Report</i></a>';
+    }
+
     if(img)
     {
-        $('#foodItems').prepend(
+        $(foodDiv).prepend(
             '<div id="foodItem" data-key='+key+' class="foodItem">' +
                 '<div class="card">'+
                     '<div data-lat='+lat+' data-lng='+lng+' data-key='+key+' class="card-image waves-effect waves-block waves-light">'+
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
-                            '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
-                            '<i class="material-icons right">delete</i></a>'+
-                            '<ul id='+key+' class="dropdown-content">'+
-                                '<li><a href="#!">one</a></li>'+
-                            '</ul>'+
+                        contentButtonHTML+
                         '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
                         '<p><a href="#">This is a link</a></p>'+
                     '</div>'+
@@ -92,28 +103,27 @@ function createFood(text, img, lat, lng, key)
                 '</div>'+
             '</div>'
         );
-        // console.log("added img");
     }
-    else
-        $('#foodItems').prepend(
-    '<div id="foodItem" data-key='+key+' class="foodItem">' +
-        '<div class="card">'+
-            '<div class="card-content">'+
-                '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
-                '<i class="material-icons right">delete</i></a>'+
-                '<ul id='+key+' class="dropdown-content">'+
-                '<li><a href="#!">one</a></li>'+
-                '</ul>'+
-                '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
-                '<p><a href="#">This is a link</a></p>'+
-            '</div>'+
-            '<div class="card-reveal">'+
-                '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
-                '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
-            '</div>'+
-        '</div>'+
-    '</div>'
+    else{
+        $(foodDiv).prepend(
+            '<div id="foodItem" data-key='+key+' class="foodItem">' +
+                '<div class="card">'+
+                    '<div class="card-content">'+
+                        contentButtonHTML+
+                        '<ul id='+key+' class="dropdown-content">'+
+                            '<li><a href="#!">one</a></li>'+
+                        '</ul>'+
+                        '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
+                        '<p><a href="#">This is a link</a></p>'+
+                    '</div>'+
+                    '<div class="card-reveal">'+
+                        '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
+                        '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'
         );
+    }
 }
 $('#newItemForm').submit(function(e)
 {
@@ -154,10 +164,10 @@ var FoodListApp = React.createClass({
     },
     handleAdd: function() {
         // console.log(checkLoggedIn());
-        if(!signedIn){
-            alert("You must be signed in to add a FoodShare!");
-            return;
-        }
+        // if(!signedIn){
+        //     alert("You must be signed in to add a FoodShare!");
+        //     return;
+        // }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         //check to see if a location has been selected and that text has been added to the food form
         if(!latLng || this.state.text == ''){

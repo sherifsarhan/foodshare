@@ -25,6 +25,8 @@ firebase.auth().onAuthStateChanged(function(user) {
         signedIn = true;
     } else {
         // No user is signed in.
+        uid = null;
+        signedIn = false;
     }
 });
 

@@ -18,6 +18,8 @@ var ReactTestUtils = require('react-addons-test-utils');
 //
 // var foodshareRef = firebase.database().ref("foodshare");
 
+var signedIn;
+var uid;
 class NavBar extends React.Component{
     constructor(props){
         super(props);
@@ -38,20 +40,29 @@ class NavBar extends React.Component{
 
         this.closeModal = this.closeModal.bind(this);
 
-        var uid;
         var stateObj = this;
         //get user info if they're signed in
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 // User is signed in.
-                // uid = user.uid;
+                user.getToken(true).then(function(idToken) {
+                    // Send token to your backend via HTTPS
+                    // ...
+                    //console.log(idToken);
+                }).catch(function(error) {
+                    // Handle error
+                });
+
+                uid = user.uid;
+                signedIn = true;
                 stateObj.setState({currentUser: user.email, loginState: true, uid: user.uid});
             } else {
                 // No user is signed in.
                 stateObj.setState({currentUser: '', loginState: false, uid: ''});
+                uid = null;
+                signedIn = false;
             }
         });
-
     }
 
     setDefaultState(){
@@ -236,7 +247,7 @@ class LoginBox extends React.Component{
             var token = result.credential.accessToken;
             // The signed-in user info.
             var user = result.user;
-            console.log(user);
+            //console.log(user);
             stateObj.props.onEmailChange(user.email);
             stateObj.props.closeModal();
             // $('#modal1').closeModal();
