@@ -3,25 +3,29 @@ import ReactDOM from 'react-dom'
 import {Button, Input, Row} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
 
+var foodItemsStore = [];
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
+    var foodItem = {food: v.val().food, img: v.val().img, lat: v.val().lat, lng: v.val().lng, key: v.key, uid: v.val().uid};
+    foodItemsStore.push(foodItem);
     createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key, v.val().uid);
 });
 
-// var signedIn;
-// var uid;
-// //get user info if they're signed in
-// firebase.auth().onAuthStateChanged(function(user) {
-//     if (user) {
-//         // User is signed in.
-//         uid = user.uid;
-//         signedIn = true;
-//     } else {
-//         // No user is signed in.
-//         uid = null;
-//         signedIn = false;
-//     }
-// });
+//get user info if they're signed in
+firebase.auth().onAuthStateChanged(function(user) {
+    if(foodItemsStore.length > 0){
+        //delete the previous rendering of food items
+        $('#myfoodItems').empty();
+        $('#foodItems').empty();
+        var i;
+        var currentFood;
+        for(i=0; i<foodItemsStore.length; i++){
+            //recreate rendering of food items
+            currentFood = foodItemsStore[i];
+            createFood(currentFood.food, currentFood.img, currentFood.lat, currentFood.lng, currentFood.key, currentFood.uid);
+        }
+    }
+});
 
 var currentlyRevealedParent;
 $('#foodItems').on('click', ".activator", function () {
@@ -56,7 +60,15 @@ $('#foodItems').on('click', ".activator", function () {
     map.setCenter(pos);
 });
 
-$('#foodItems').on('click', '.dropdown-button', function() {
+$('#foodItems').on('click', '.dropdown-button.delete', function() {
+    //delete the selectedMarker
+    $.ajax({url: "/foodDelete",
+        type: 'DELETE',
+        data: { key: $(this).data('activates')}});
+    $(this).parent().parent().parent().remove();
+});
+
+$('#myfoodItems').on('click', '.dropdown-button.delete', function() {
     //delete the selectedMarker
     $.ajax({url: "/foodDelete",
         type: 'DELETE',
@@ -69,13 +81,11 @@ function createFood(text, img, lat, lng, key, foodUID)
     //TODO: CHECK TO SEE IF USER IS LOGGED IN, ONLY ALLOW DELETE BUTTON TO SHOW UP ON USER'S OWN SHARES
     //TODO: OTHERWISE, SHOW THE REPORT BUTTON
 
-    var foodDiv;
-    if(foodUID = uid) foodDiv = '#myfoodItems';
-    else foodDiv = '#foodItems';
-
+    var foodDiv = '#foodItems';
     var contentButtonHTML;
-    if(signedIn) {
-        contentButtonHTML = '<a class="dropdown-button btn red right" href="#" data-activates='+key+'>Delete'+
+    if(signedIn && foodUID == uid) {
+        foodDiv = '#myfoodItems';
+        contentButtonHTML = '<a class="dropdown-button delete btn red right" href="#" data-activates='+key+'>Delete'+
             '<i class="material-icons right">delete</i></a>';
     }
     else{
@@ -164,10 +174,10 @@ var FoodListApp = React.createClass({
     },
     handleAdd: function() {
         // console.log(checkLoggedIn());
-        // if(!signedIn){
-        //     alert("You must be signed in to add a FoodShare!");
-        //     return;
-        // }
+        if(!signedIn){
+            alert("You must be signed in to add a FoodShare!");
+            return;
+        }
         // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
         //check to see if a location has been selected and that text has been added to the food form
         if(!latLng || this.state.text == ''){
