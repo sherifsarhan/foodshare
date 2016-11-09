@@ -206,7 +206,9 @@ class NavBar extends React.Component{
     }
 }
 
-var provider = new firebase.auth.GoogleAuthProvider();
+var providerGoogle = new firebase.auth.GoogleAuthProvider();
+var providerFB = new firebase.auth.FacebookAuthProvider();
+
 class LoginBox extends React.Component{
     constructor(props) {
         super(props);
@@ -216,6 +218,7 @@ class LoginBox extends React.Component{
         this.onLoginHandler = this.onLoginHandler.bind(this);
         this.onRegisterHandler = this.onRegisterHandler.bind(this);
         this.onGoogleSignin = this.onGoogleSignin.bind(this);
+        this.onFBSignin = this.onFBSignin.bind(this);
     };
 
     handleOnEmailChange(e){
@@ -242,7 +245,7 @@ class LoginBox extends React.Component{
     }
     onGoogleSignin(e){
         var stateObj = this;
-        firebase.auth().signInWithPopup(provider).then(function(result) {
+        firebase.auth().signInWithPopup(providerGoogle).then(function(result) {
             // This gives you a Google Access Token. You can use it to access the Google API.
             var token = result.credential.accessToken;
             // The signed-in user info.
@@ -262,6 +265,27 @@ class LoginBox extends React.Component{
             // The firebase.auth.AuthCredential type that was used.
             var credential = error.credential;
             // ...
+        });
+    }
+
+    onFBSignin(e){
+        var stateObj = this;
+        firebase.auth().signInWithPopup(providerFB).then(function(result) {
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            //console.log(user);
+            stateObj.props.onEmailChange(user.email);
+            stateObj.props.closeModal();
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
         });
     }
 
@@ -291,6 +315,9 @@ class LoginBox extends React.Component{
                     </Row>
                     <Row>
                         <Button className="col s12 orange accent-4" onClick={this.onGoogleSignin} type="button">Google Signin</Button>
+                    </Row>
+                    <Row>
+                        <Button className="col s12 light-blue accent-4" onClick={this.onFBSignin} type="button">Facebook Signin</Button>
                     </Row>
                 </form>
             </Row>

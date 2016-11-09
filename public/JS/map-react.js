@@ -79,8 +79,8 @@ function createFood(text, img, lat, lng, key, foodUID)
             '<i class="material-icons right">delete</i></a>';
     }
     else{
-        contentButtonHTML = '<a class="dropdown-button btn teal accent-3 right" href="#" data-activates='+key+'>Delete'+
-            '<i class="material-icons right">Report</i></a>';
+        contentButtonHTML = '<a class="dropdown-button btn teal accent-3 right" href="#" data-activates='+key+'>Report'+
+            '<i class="material-icons right">report_problem</i></a>';
     }
 
     if(img)
