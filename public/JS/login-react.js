@@ -170,8 +170,8 @@ class NavBar extends React.Component{
         return(
             <div style={{height:"100%"}}>
                 <nav className="navbar navbar-light bg-faded">
-                    <ul className="nav navbar-nav" style={{height:"100%", position: "relative"}}>
-                        <li className="nav-item" style={{height:"100%"}}>
+                    <ul className="nav navbar-nav" style={{height:"100%", width:"100%", position: "relative"}}>
+                        <li className="nav-item" style={{height:"100%", width:"100%"}}>
                             {this.state.loginState ?
                                 <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
                                    className="nav-link whitetext" onClick={this.handleLogout}>
@@ -198,6 +198,19 @@ class NavBar extends React.Component{
                                 </Modal>
                             }
 
+                            <Modal className="helpModal" id="helpModal1"
+                                   header="Help"
+                                   trigger={
+                                       <Button className="helpBtn right" waves="light">Help</Button>
+                                   }>
+                                To add a new foodShare, you must be signed in using your email, Google, or Facebook.
+                                Click anywhere on the map to specify the location of the foodShare, or just click on the "Center Map" button
+                                to find your current location. Then, add the name of your foodShare, a description, and a tag. You may
+                                also add an image by clicking on "Choose File." Once you finalize the information, click "Add".
+                                Your foodShares will appear first on the left hand side of the page, above everyone else's foodShares.
+                                You may delete your own foodShares by clicking the "Delete" button next to them. You may report other foodShares
+                                by clicking the "Report" button.
+                            </Modal>
                         </li>
                     </ul>
                 </nav>
