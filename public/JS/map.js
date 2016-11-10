@@ -25,6 +25,8 @@ firebase.auth().onAuthStateChanged(function(user) {
         signedIn = true;
     } else {
         // No user is signed in.
+        uid = null;
+        signedIn = false;
     }
 });
 
@@ -214,6 +216,8 @@ foodshareRef.on("child_added", function(data){
 
     markers[count] = tempMarker;
     markersTest[data.key] = tempMarker;
+    markersTest[data.key].lat = myLatLng.lat;
+    markersTest[data.key].lng = myLatLng.lng;
 
     // // creates the info window for the marker
     var infoWindow = new google.maps.InfoWindow({
@@ -305,8 +309,6 @@ function addUpdateMarker(text, tag, img) {
         selectedMarker.text = markerText;
         selectedMarker.tag = markerTag;
         //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-
-        console.log("tag is: " + selectedMarker.tag);
 
         var formData = new FormData();
         if(img) formData.append('img', img, img.name);

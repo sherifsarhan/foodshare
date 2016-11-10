@@ -18,24 +18,14 @@ var ReactTestUtils = require('react-addons-test-utils');
 //
 // var foodshareRef = firebase.database().ref("foodshare");
 
-var signedIn = false;
-var uid = "testa";
-//get user info if they're signed in
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        // User is signed in.
-        uid = user.uid;
-    } else {
-        // No user is signed in.
-    }
-});
-
+var signedIn;
+var uid;
 class NavBar extends React.Component{
     constructor(props){
         super(props);
         this.state = {email: "", password: "", showError: false, error: "",
             success: "", showSuccess: false, showLoginBox: true,
-            loginState: false, currentUser: ""};
+            loginState: false, currentUser: "", uid: ''};
 
         this.loginHandler = this.loginHandler.bind(this);
         this.registerHandler = this.registerHandler.bind(this);
@@ -47,6 +37,32 @@ class NavBar extends React.Component{
 
         this.hideError = this.hideError.bind(this);
         this.hideSuccess = this.hideSuccess.bind(this);
+
+        this.closeModal = this.closeModal.bind(this);
+
+        var stateObj = this;
+        //get user info if they're signed in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in.
+                user.getToken(true).then(function(idToken) {
+                    // Send token to your backend via HTTPS
+                    // ...
+                    //console.log(idToken);
+                }).catch(function(error) {
+                    // Handle error
+                });
+
+                uid = user.uid;
+                signedIn = true;
+                stateObj.setState({currentUser: user.email, loginState: true, uid: user.uid});
+            } else {
+                // No user is signed in.
+                stateObj.setState({currentUser: '', loginState: false, uid: ''});
+                uid = null;
+                signedIn = false;
+            }
+        });
     }
 
     setDefaultState(){
@@ -84,16 +100,14 @@ class NavBar extends React.Component{
                 if(success) {
                     console.log("SUCCESS LOGIN");
                     stateObj.setState({showError: false, success: " Signed in!", showSuccess: true});
-
-                    // need to keep track that user is logged in
-                    // and also Hide the login box
-                    //console.log($('#modal1').html());
-                    $('#modal1').closeModal();
-
-
-                    stateObj.setState({loginState: true, showLoginBox: false, currentUser: stateObj.state.email});
+                    stateObj.closeModal();
                 }
             });
+    }
+
+    closeModal(){
+        $('#modal1').closeModal();
+        this.setState({loginState: true, showLoginBox: false, currentUser: this.state.email});
     }
 
     registerHandler(e) {
@@ -150,12 +164,14 @@ class NavBar extends React.Component{
         this.setState({showSuccess: false});
     }
 
+
+
     render() {
         return(
             <div style={{height:"100%"}}>
                 <nav className="navbar navbar-light bg-faded">
-                    <ul className="nav navbar-nav" style={{height:"100%", position: "relative"}}>
-                        <li className="nav-item" style={{height:"100%"}}>
+                    <ul className="nav navbar-nav" style={{height:"100%", width:"100%", position: "relative"}}>
+                        <li className="nav-item" style={{height:"100%", width:"100%"}}>
                             {this.state.loginState ?
                                 <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
                                    className="nav-link whitetext" onClick={this.handleLogout}>
@@ -168,7 +184,8 @@ class NavBar extends React.Component{
                                 <Button style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
                                         ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
                                 }>
-                                <LoginBox loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
+                                <LoginBox closeModal={this.closeModal} loginState={this.state.loginState} currentUser={this.state.currentUser}
+                                          loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
                                           email={this.state.email} onEmailChange={this.onEmailChange}
                                           password={this.state.password} onPasswordChange={this.onPasswordChange}
                                           showError={this.state.showError} error={this.state.error}
@@ -181,6 +198,19 @@ class NavBar extends React.Component{
                                 </Modal>
                             }
 
+                            <Modal className="helpModal" id="helpModal1"
+                                   header="Help"
+                                   trigger={
+                                       <Button className="helpBtn right" waves="light">Help</Button>
+                                   }>
+                                To add a new foodShare, you must be signed in using your email, Google, or Facebook.
+                                Click anywhere on the map to specify the location of the foodShare, or just click on the "Center Map" button
+                                to find your current location. Then, add the name of your foodShare, a description, and a tag. You may
+                                also add an image by clicking on "Choose File." Once you finalize the information, click "Add".
+                                Your foodShares will appear first on the left hand side of the page, above everyone else's foodShares.
+                                You may delete your own foodShares by clicking the "Delete" button next to them. You may report other foodShares
+                                by clicking the "Report" button.
+                            </Modal>
                         </li>
                     </ul>
                 </nav>
@@ -189,6 +219,8 @@ class NavBar extends React.Component{
     }
 }
 
+var providerGoogle = new firebase.auth.GoogleAuthProvider();
+var providerFB = new firebase.auth.FacebookAuthProvider();
 
 class LoginBox extends React.Component{
     constructor(props) {
@@ -198,6 +230,8 @@ class LoginBox extends React.Component{
             loginState: false, currentUser: ""};
         this.onLoginHandler = this.onLoginHandler.bind(this);
         this.onRegisterHandler = this.onRegisterHandler.bind(this);
+        this.onGoogleSignin = this.onGoogleSignin.bind(this);
+        this.onFBSignin = this.onFBSignin.bind(this);
     };
 
     handleOnEmailChange(e){
@@ -222,6 +256,52 @@ class LoginBox extends React.Component{
     onRegisterHandler(e){
         this.props.registerHandler(e);
     }
+    onGoogleSignin(e){
+        var stateObj = this;
+        firebase.auth().signInWithPopup(providerGoogle).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            //console.log(user);
+            stateObj.props.onEmailChange(user.email);
+            stateObj.props.closeModal();
+            // $('#modal1').closeModal();
+
+            // ...
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage);
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+        });
+    }
+
+    onFBSignin(e){
+        var stateObj = this;
+        firebase.auth().signInWithPopup(providerFB).then(function(result) {
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            //console.log(user);
+            stateObj.props.onEmailChange(user.email);
+            stateObj.props.closeModal();
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+        });
+    }
 
     render() {
         return(
@@ -242,13 +322,16 @@ class LoginBox extends React.Component{
                             : null}
                     </Row>
                     <Row>
-                        {/*<Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        {/*<Button className="lgnBtn" onClick={this.onLoginHandler.bind(this)} type="button">LOGIN</Button>*/}
-                        <Button className="lgnBtn" onClick={this.onLoginHandler} type="button">LOGIN</Button>
+                        <Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler} type="button">LOGIN</Button>
                     </Row>
                     <Row>
-                        {/*<Button className="col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>*/}
-                        <Button className="regBtn" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
+                        <Button className="regBtn col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
+                    </Row>
+                    <Row>
+                        <Button className="col s12 orange accent-4" onClick={this.onGoogleSignin} type="button">Google Signin</Button>
+                    </Row>
+                    <Row>
+                        <Button className="col s12 light-blue accent-4" onClick={this.onFBSignin} type="button">Facebook Signin</Button>
                     </Row>
                 </form>
             </Row>

@@ -6,6 +6,16 @@ html, body{
     right:0;
 }
 
+.helpBtn{
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 1%;
+}
+
+.card .card-content .card-title {
+     line-height: 32px;
+}
+
 nav {
     color: #fff;
     background-color: #ee6e73;

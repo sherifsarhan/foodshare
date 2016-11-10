@@ -74,6 +74,7 @@ var fireRef = firebase.database().ref('foodshare');
 
 //Make a new one
 app.post('/foodAdd', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
+    console.log("Adding food");
     var data = {
         food: req.body.food,
         lat : parseFloat(req.body.lat),
@@ -100,7 +101,7 @@ app.get('/', function (req, res) {
 
 //Edit a foodshare
 app.put('/foodEdit', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
-    console.log("Editing food: " + req.body.key);
+    console.log("Editing food");
 
     var img = null;
     if(req.file) img = getPublicUrl(req.file.cloudStorageObject);
@@ -119,7 +120,7 @@ app.put('/foodEdit', uploader.single("img"), sendUploadToGCS, function (req, res
 
 //delete a foodshare
 app.delete('/foodDelete', function (req, res) {
-    console.log("Removing food: "+ req.body.key);
+    console.log("Removing food");
     fireRef.child(req.body.key).remove();
     res.send("OK!");
 });
