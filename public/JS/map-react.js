@@ -3,26 +3,35 @@ import ReactDOM from 'react-dom'
 import {Button, Input, Row} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
 
-var foodItemsStore = [];
+var foodItemsStore = {};
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
     var foodItem = {food: v.val().food, img: v.val().img, lat: v.val().lat, lng: v.val().lng, key: v.key, uid: v.val().uid};
-    foodItemsStore.push(foodItem);
+    foodItemsStore[foodItem.key] = foodItem;
     createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key, v.val().uid);
+});
+
+fireRef.on("child_removed", function(v){
+    //remove from foodlist in the sidebar if someone else deleted it
+    delete foodItemsStore[v.key];
+    $('.sidebar.col.s3').find('#foodItem').filter(function () {
+        return $(this).data('key') == v.key;
+    }).remove();
 });
 
 //get user info if they're signed in
 firebase.auth().onAuthStateChanged(function(user) {
-    if(foodItemsStore.length > 0){
+    if(!$.isEmptyObject(foodItemsStore)) {
         //delete the previous rendering of food items
         $('#myfoodItems').empty();
         $('#foodItems').empty();
-        var i;
+
         var currentFood;
-        for(i=0; i<foodItemsStore.length; i++){
-            //recreate rendering of food items
-            currentFood = foodItemsStore[i];
-            createFood(currentFood.food, currentFood.img, currentFood.lat, currentFood.lng, currentFood.key, currentFood.uid);
+        for (var key in foodItemsStore) {
+            if (foodItemsStore.hasOwnProperty(key)) {
+                currentFood = foodItemsStore[key];
+                createFood(currentFood.food, currentFood.img, currentFood.lat, currentFood.lng, currentFood.key, currentFood.uid);
+            }
         }
     }
 });
@@ -45,7 +54,7 @@ $('#foodItems').on('click', ".activator", function () {
         foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
     }
     else if($(this).is("span")){
-        currentlyRevealedParent = $(this).parent().parent().siblings('div.card-reveal').children()[0];
+        currentlyRevealedParent = $(this).parent().siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
     }
     else{
@@ -58,14 +67,6 @@ $('#foodItems').on('click', ".activator", function () {
         lng:    foodMarker.lng
     };
     map.setCenter(pos);
-});
-
-$('#foodItems').on('click', '.dropdown-button.delete', function() {
-    //delete the selectedMarker
-    $.ajax({url: "/foodDelete",
-        type: 'DELETE',
-        data: { key: $(this).data('activates')}});
-    $(this).parent().parent().parent().remove();
 });
 
 $('#myfoodItems').on('click', '.dropdown-button.delete', function() {
