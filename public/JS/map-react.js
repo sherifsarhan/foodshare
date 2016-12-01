@@ -76,6 +76,12 @@ $('#myfoodItems').on('click', '.dropdown-button.delete', function() {
         data: { key: $(this).data('activates')}});
     //delete item from left sidebar list
     $(this).parent().parent().parent().remove();
+    Materialize.toast('Foodshare deleted!', 3000, 'rounded')
+});
+
+$('#foodItems').on('click', '.dropdown-button.delete', function() {
+    //report the foodshare
+    Materialize.toast('Foodshare reported!', 3000, 'rounded')
 });
 
 function createFood(text, img, lat, lng, key, foodUID)

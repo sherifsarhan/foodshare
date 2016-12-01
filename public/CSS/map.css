@@ -6,6 +6,25 @@ html, body{
     right:0;
 }
 
+.empty3{
+    height: 8.5%;
+    margin-right: 0.5%;
+}
+
+.empty2{
+    margin-left: 2%;
+}
+.empty{
+    height: 9.7%;
+    margin-right: 2%;
+}
+
+.logo{
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 1%;
+}
+
 .helpBtn{
     top: 50%;
     transform: translateY(-50%);

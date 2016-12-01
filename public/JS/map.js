@@ -58,6 +58,15 @@ function getCoordinates(position) {
     };
 }
 
+function HelperAdd(helperAddDiv){
+    var helperAddText = document.createElement('div');
+    helperAddText.innerHTML = '<b>Add a new foodshare</b>';
+    helperAddText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    helperAddText.style.fontSize = '20px';
+    helperAddText.style.lineHeight = '38px';
+    helperAddDiv.appendChild(helperAddText);
+}
+
 function CenterControl(controlDiv, map) {
 
     // Set CSS for the control border.
@@ -117,15 +126,23 @@ function initMap() {
 
     // Create the DIV to hold the control and call the CenterControl()
     // constructor passing in this DIV.
+    var helperAddDiv = document.createElement('div');
+    helperAddDiv.className = 'empty3';
+    var helperAdd = new HelperAdd(helperAddDiv);
+    helperAddDiv.index = 0;
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(helperAddDiv);
+
     var centerControlDiv = document.createElement('div');
+    centerControlDiv.className = 'empty2';
     var centerControl = new CenterControl(centerControlDiv, map);
-    centerControlDiv.index = 1;
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+    centerControlDiv.index = 2;
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
 
     var addBtnDiv = document.createElement('div');
+    addBtnDiv.className = 'empty';
     var addBtn = new AddBtn(addBtnDiv);
     addBtnDiv.index = 1;
-    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(addBtnDiv);
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(addBtnDiv);
 }
 
 // adds a new marker to the map
@@ -267,6 +284,7 @@ function addUpdateMarker(text, tag, img) {
     });
 
     $('#modalAddFood').closeModal();
+    Materialize.toast('Foodshare added!', 3000, 'rounded')
 }
 
 function checkLoggedIn(){
