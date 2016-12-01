@@ -6,7 +6,73 @@ html, body{
     right:0;
 }
 
+/*.modal { width: 50% !important  }  !* increase the width as per you desire *!*/
+
+div.col.input-Field{
+    width:100%;
+}
+
+.emailInput{
+    width: 100%;
+}
+
+.passwordInput{
+    width: 100%;
+}
+
+#modalAddFood{
+    overflow: hidden;
+}
+
+h4{
+    margin-bottom: 0%;
+}
+
+.row {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0px;
+}
+
+.imgContainer{
+    height: 70%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.img{
+    max-width:100%;
+    max-height:70%;
+    margin:auto;
+    display:block;
+}
+
+.empty3{
+    height: 8.5%;
+    margin-right: 0.5%;
+}
+
+.empty2{
+    margin-left: 2%;
+}
+.empty{
+    height: 9.7%;
+    margin-right: 2%;
+}
+
+.logo{
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 1%;
+}
+
 .helpBtn{
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 1%;
+}
+
+.lgnRegBtn{
     top: 50%;
     transform: translateY(-50%);
     margin-right: 1%;

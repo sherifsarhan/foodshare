@@ -6,9 +6,9 @@ var ReactTestUtils = require('react-addons-test-utils');
 var foodItemsStore = {};
 var fireRef = firebase.database().ref('foodshare');
 fireRef.on("child_added", function(v){
-    var foodItem = {food: v.val().food, img: v.val().img, lat: v.val().lat, lng: v.val().lng, key: v.key, uid: v.val().uid};
+    var foodItem = {food: v.val().food, desc: v.val().desc, img: v.val().img, lat: v.val().lat, lng: v.val().lng, key: v.key, uid: v.val().uid};
     foodItemsStore[foodItem.key] = foodItem;
-    createFood(v.val().food, v.val().img, v.val().lat, v.val().lng, v.key, v.val().uid);
+    createFood(v.val().food, v.val().desc, v.val().img, v.val().lat, v.val().lng, v.key, v.val().uid);
 });
 
 fireRef.on("child_removed", function(v){
@@ -30,7 +30,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         for (var key in foodItemsStore) {
             if (foodItemsStore.hasOwnProperty(key)) {
                 currentFood = foodItemsStore[key];
-                createFood(currentFood.food, currentFood.img, currentFood.lat, currentFood.lng, currentFood.key, currentFood.uid);
+                createFood(currentFood.food, currentFood.desc, currentFood.img, currentFood.lat, currentFood.lng, currentFood.key, currentFood.uid);
             }
         }
     }
@@ -57,31 +57,39 @@ $('.sidebar.col.s3').on('click', ".activator", function () {
         currentlyRevealedParent = $(this).parent().siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
     }
+    else if($(this).is("a")){
+        currentlyRevealedParent = $(this).parent().parent().siblings('div.card-reveal').children()[0];
+        foodMarker = markersTest[$(this).parent().parent().parent().parent().data('key')];
+    }
     else{
         currentlyRevealedParent = $(this).siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().data('key')];
     }
-
-    pos = {
+    foodMarker.infoWindowRef.open(foodMarker.get('map'), foodMarker);
+    var foodPos = {
         lat:    foodMarker.lat,
         lng:    foodMarker.lng
     };
-    map.setCenter(pos);
+    map.setCenter(foodPos);
 });
 
 $('#myfoodItems').on('click', '.dropdown-button.delete', function() {
-    //delete the selectedMarker
+    //delete the selectedMarker from map
     $.ajax({url: "/foodDelete",
         type: 'DELETE',
         data: { key: $(this).data('activates')}});
+    //delete item from left sidebar list
     $(this).parent().parent().parent().remove();
+    Materialize.toast('Foodshare deleted!', 3000, 'rounded')
 });
 
-function createFood(text, img, lat, lng, key, foodUID)
-{
-    //TODO: CHECK TO SEE IF USER IS LOGGED IN, ONLY ALLOW DELETE BUTTON TO SHOW UP ON USER'S OWN SHARES
-    //TODO: OTHERWISE, SHOW THE REPORT BUTTON
+$('#foodItems').on('click', '.dropdown-button.delete', function() {
+    //report the foodshare
+    Materialize.toast('Foodshare reported!', 3000, 'rounded')
+});
 
+function createFood(text, desc, img, lat, lng, key, foodUID)
+{
     var foodDiv = '#foodItems';
     var contentButtonHTML;
     if(signedIn && foodUID == uid) {
@@ -105,11 +113,11 @@ function createFood(text, img, lat, lng, key, foodUID)
                     '<div class="card-content">'+
                         contentButtonHTML+
                         '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
-                        '<p><a href="#">This is a link</a></p>'+
+                        '<p><a class="activator" href="#">Click here for more details</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
                         '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
-                        '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+                        '<p>'+desc+'</p>'+
                     '</div>'+
                 '</div>'+
             '</div>'
@@ -125,11 +133,11 @@ function createFood(text, img, lat, lng, key, foodUID)
                             '<li><a href="#!">one</a></li>'+
                         '</ul>'+
                         '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
-                        '<p><a href="#">This is a link</a></p>'+
+                        '<p><a class="activator" href="#">Click here for more details</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
                         '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
-                        '<p>Here is some more information about this product that is only revealed once clicked on.</p>'+
+                        '<p>'+desc+'</p>'+
                     '</div>'+
                 '</div>'+
             '</div>'
@@ -162,10 +170,7 @@ var FoodListItems = React.createClass({
 
 var FoodListApp = React.createClass({
     getInitialState: function() {
-        return {items: [], text: '', tag: '', img: '', imgPreview: false};
-    },
-    componentDidMount: function(){
-        getFoodList(this);
+        return {items: [], text: '', desc: '', tag: '', img: '', imgPreview: false};
     },
     onChange: function(e) {
         this.setState({text: e.target.value});
@@ -173,15 +178,17 @@ var FoodListApp = React.createClass({
     onTagChange: function(e) {
         this.setState({tag: e.target.value});
     },
+    onDescChange: function(e) {
+        this.setState({desc: e.target.value});
+    },
     handleAdd: function() {
         // console.log(checkLoggedIn());
         if(!signedIn){
             alert("You must be signed in to add a FoodShare!");
             return;
         }
-        // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
-        //check to see if a location has been selected and that text has been added to the food form
-        if(!latLng || this.state.text == ''){
+        //check to see if  text has been added to the food form
+        if(this.state.text == ''){
             console.log("Please either select a location or enter in the food text");
             return;
         }
@@ -189,15 +196,15 @@ var FoodListApp = React.createClass({
         // var nextItems = this.state.items.concat([{text: this.state.text, id: Date.now()}]);
         var nextText = '';
         // this.setState({items: nextItems, text: nextText});
-        addUpdateMarker(this.state.text, this.state.tag, this.state.img);
-        this.setState({text: '', tag: '', imgPreview: false, img: null});
+        addUpdateMarker(this.state.text, this.state.desc, this.state.tag, this.state.img);
+        this.setState({text: '', desc: '', tag: '', imgPreview: false, img: null});
     },
     handleAddHelper: function(){
         // commented out for now because firebase posting shouldn't be allowed without login
         return this.handleAdd();
     },
     updateInput: function(text, tag) {
-        this.setState({items: this.state.items, text: text, tag: tag});
+        this.setState({items: this.state.items, text: text, desc: desc, tag: tag});
     },
     handleDelete: function() {
         var deleteItem = deleteMarker();
@@ -214,17 +221,20 @@ var FoodListApp = React.createClass({
     render: function() {
         return (
             <div>
-            <FoodListItems items={this.state.items} />
         <form id="foodForm" onSubmit={this.submission}>
-        <Input id="foodInfo" className="col s6" placeholder="Enter food info" type="text" onChange={this.onChange} value={this.state.text} />
-        <Input id="foodTag" className="col s6" placeholder="Enter tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
-
-        <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
-
-        <Row>
-            <Button type="submit" className="col s12 addBtn light-green accent-4" onClick={this.handleAdd}>Add</Button>
-            {/*<Button type="submit" className="col s6 delBtn" onClick={this.handleDelete}>Delete</Button>*/}
-        </Row>
+            <Row>
+                <div className="col s6">
+                    <Input s={12} id="foodInfo" placeholder="Title" type="text" onChange={this.onChange} value={this.state.text} />
+                    <Input s={12} id="foodDesc" placeholder="Description (Example: Expiry, Location, Contact Info)" type="text" onChange={this.onDescChange} value={this.state.desc} />
+                    <Input s={12} id="foodTag" placeholder="Tag" type="text" onChange={this.onTagChange} value={this.state.tag} />
+                </div>
+                <div className="col s6">
+                    <div className="imgContainer">
+                        <ImageUpload handleImageChange={this.handleImageChange} imgPreview={this.state.imgPreview}></ImageUpload>
+                    </div>
+                </div>
+            </Row>
+            <Row><Button type="submit" className="col s12 addBtn light-green accent-4" onClick={this.handleAdd}>Add</Button></Row>
         </form>
         </div>
         );
@@ -280,8 +290,7 @@ class ImageUpload extends React.Component {
         let {imagePreviewUrl} = this.state;
         let $imagePreview = null;
         if (this.props.imgPreview) {
-            $imagePreview = (<img style={{width: "100%",height: "100%",display: "block", margin: "auto"}}
-                                  src={imagePreviewUrl} />);
+            $imagePreview = (<img style={{width: "300px"}} src={imagePreviewUrl} />);
             // $('#getFile').val(this.state.file.filename);
 
         } else {
@@ -304,7 +313,7 @@ class ImageUpload extends React.Component {
     }
 }
 
-var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
+ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
 
 //the add and delete buttons have a problem.
 //when clicked, they stay focused, and don't blur again. this fixes it.

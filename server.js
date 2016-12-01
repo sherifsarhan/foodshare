@@ -77,6 +77,7 @@ app.post('/foodAdd', uploader.single("img"), sendUploadToGCS, function (req, res
     console.log("Adding food");
     var data = {
         food: req.body.food,
+        desc: req.body.desc,
         lat : parseFloat(req.body.lat),
         lng : parseFloat(req.body.lng),
         uid : req.body.uid,

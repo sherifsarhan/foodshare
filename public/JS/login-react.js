@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Modal, Button, Input, Row} from 'react-materialize'
+import {Modal, Button, Input, Row, Col} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
 
 // var config = {
@@ -81,6 +81,7 @@ class NavBar extends React.Component{
     }
 
     loginHandler(e) {
+        e.preventDefault();
         var stateObj = this;
         var success = true;
         firebase.auth().signInWithEmailAndPassword(stateObj.state.email, stateObj.state.password)
@@ -172,17 +173,16 @@ class NavBar extends React.Component{
                 <nav className="navbar navbar-light bg-faded">
                     <ul className="nav navbar-nav" style={{height:"100%", width:"100%", position: "relative"}}>
                         <li className="nav-item" style={{height:"100%", width:"100%"}}>
+                            <a href="#" className="brand-logo logo left">- Foodshare -</a>
                             {this.state.loginState ?
-                                <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
-                                   className="nav-link whitetext" onClick={this.handleLogout}>
+                                <Button className="lgnRegBtn right deep-purple lighten-2" waves="light" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
-                                </a>
+                                </Button>
                             :
                                 <Modal className="loginModal" id="modal1"
                                 header='Login and Registration'
                                 trigger={
-                                <Button style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
-                                        ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
+                                <Button className="lgnRegBtn right light-blue accent-3" waves='light'>Login and Registration</Button>
                                 }>
                                 <LoginBox closeModal={this.closeModal} loginState={this.state.loginState} currentUser={this.state.currentUser}
                                           loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
@@ -305,36 +305,30 @@ class LoginBox extends React.Component{
 
     render() {
         return(
-            <Row>
-                <form className="col s12">
-                    <Row>
-                        {/*<Input placeholder="Placeholder" s={6} label="First Name" />*/}
-                        {/*<Input s={6} label="Last Name" />*/}
-                        <Input onChange={this.handleOnEmailChange.bind(this)} type="email" label="Email" s={12} />
-                        <Input onChange={this.handleOnPasswordChange.bind(this)} type="password" label="password" s={12} />
-                    </Row>
-                    <Row>
-                        { this.props.showError ?
-                            <Button onClick={this.onHideError.bind(this)} className="red col s12">{this.props.error}</Button>
-                            : null}
-                        { this.props.showSuccess ?
-                            <Button onClick={this.onHideSuccess.bind(this)} className="green col s12">{this.props.success}</Button>
-                            : null}
-                    </Row>
-                    <Row>
-                        <Button className="lgnBtn col s12 cyan lighten-2" onClick={this.onLoginHandler} type="button">LOGIN</Button>
-                    </Row>
-                    <Row>
-                        <Button className="regBtn col s12 orange accent-4" onClick={this.onRegisterHandler} type="button">REGISTER</Button>
-                    </Row>
-                    <Row>
-                        <Button className="col s12 orange accent-4" onClick={this.onGoogleSignin} type="button">Google Signin</Button>
-                    </Row>
-                    <Row>
-                        <Button className="col s12 light-blue accent-4" onClick={this.onFBSignin} type="button">Facebook Signin</Button>
-                    </Row>
-                </form>
-            </Row>
+            <form onSubmit={this.onLoginHandler}>
+                <Input className="emailInput col s12" style={{width: '100%'}} onChange={this.handleOnEmailChange.bind(this)} type="email" label="Email"/>
+                <Input className="passwordInput col s12" style={{width: '100%'}} onChange={this.handleOnPasswordChange.bind(this)} type="password" label="Password"/>
+                <input type="submit" style={{display: "none"}} />
+                <Row>
+                    { this.props.showError ?
+                        <Button onClick={this.onHideError.bind(this)} className="red col s12">{this.props.error}</Button>
+                        : null}
+                    { this.props.showSuccess ?
+                        <Button onClick={this.onHideSuccess.bind(this)} className="green col s12">{this.props.success}</Button>
+                        : null}
+                </Row>
+                <Row>
+                    <Col s={6}><Button className="cyan lighten-2 col s12" onClick={this.onLoginHandler} type="button">Login</Button></Col>
+                    <Col s={6}><Button className="orange accent-4 col s12" onClick={this.onRegisterHandler} type="button">Register</Button></Col>
+                </Row>
+                    <br></br>
+                <Row>
+                    <Col s={12}><Button className="green darken-4 col s12" onClick={this.onGoogleSignin} type="button">Google Signin</Button></Col>
+                </Row>
+                <Row>
+                    <Col s={12}><Button className="light-blue accent-4 col s12" onClick={this.onFBSignin} type="button">Facebook Signin</Button></Col>
+                </Row>
+            </form>
         );
     }
 }
