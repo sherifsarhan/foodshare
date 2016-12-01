@@ -61,7 +61,7 @@ $('.sidebar.col.s3').on('click', ".activator", function () {
         currentlyRevealedParent = $(this).siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().data('key')];
     }
-
+    foodMarker.infoWindowRef.open(foodMarker.get('map'), foodMarker);
     var foodPos = {
         lat:    foodMarker.lat,
         lng:    foodMarker.lng

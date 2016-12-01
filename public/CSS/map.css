@@ -12,6 +12,12 @@ html, body{
     margin-right: 1%;
 }
 
+.lgnBtn{
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 1%;
+}
+
 .card .card-content .card-title {
      line-height: 32px;
 }

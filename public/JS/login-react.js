@@ -173,16 +173,14 @@ class NavBar extends React.Component{
                     <ul className="nav navbar-nav" style={{height:"100%", width:"100%", position: "relative"}}>
                         <li className="nav-item" style={{height:"100%", width:"100%"}}>
                             {this.state.loginState ?
-                                <a style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
-                                   className="nav-link whitetext" onClick={this.handleLogout}>
+                                <Button className="lgnBtn right" waves="light" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)
-                                </a>
+                                </Button>
                             :
                                 <Modal className="loginModal" id="modal1"
                                 header='Login and Registration'
                                 trigger={
-                                <Button style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}
-                                        ref="lgnRegBtn" className="lgnRegBtn" waves='light'>Login and Registration</Button>
+                                <Button ref="lgnRegBtn" className="lgnRegBtn lgnBtn right" waves='light'>Login and Registration</Button>
                                 }>
                                 <LoginBox closeModal={this.closeModal} loginState={this.state.loginState} currentUser={this.state.currentUser}
                                           loginHandler={this.loginHandler} registerHandler = {this.registerHandler}
