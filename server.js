@@ -75,7 +75,6 @@ var fireRef = firebase.database().ref('foodshare');
 //Make a new one
 app.post('/foodAdd', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
     console.log("Adding food");
-    console.log(req.body.desc);
     var data = {
         food: req.body.food,
         desc: req.body.desc,
