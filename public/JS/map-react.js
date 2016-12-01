@@ -57,6 +57,10 @@ $('.sidebar.col.s3').on('click', ".activator", function () {
         currentlyRevealedParent = $(this).parent().siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().parent().data('key')];
     }
+    else if($(this).is("a")){
+        currentlyRevealedParent = $(this).parent().parent().siblings('div.card-reveal').children()[0];
+        foodMarker = markersTest[$(this).parent().parent().parent().parent().data('key')];
+    }
     else{
         currentlyRevealedParent = $(this).siblings('div.card-reveal').children()[0];
         foodMarker = markersTest[$(this).parent().parent().data('key')];
@@ -129,7 +133,7 @@ function createFood(text, desc, img, lat, lng, key, foodUID)
                             '<li><a href="#!">one</a></li>'+
                         '</ul>'+
                         '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
-                        '<p><a href="#">Click here for more details</a></p>'+
+                        '<p><a class="activator" href="#">Click here for more details</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
                         '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
