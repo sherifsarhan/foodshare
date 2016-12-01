@@ -9,6 +9,8 @@ var config = {
 };
 firebase.initializeApp(config);
 
+
+//TODO: Fix bug where selectedMarker is the last added foodshare from onChildAdded. Make it null
 var foodshareRef = firebase.database().ref("foodshare");
 var foodCountDB = 0;
 foodshareRef.on("value", function(snapshot) {
@@ -100,7 +102,16 @@ function CenterControl(controlDiv, map) {
         };
         google.maps.event.trigger(map, 'click', mev);
     });
+}
 
+function AddBtn(addBtnDiv){
+    var addBtnUI = document.createElement('div');
+    addBtnUI.innerHTML = "<button id='addFoodshareMapBtn' class='btn-floating btn-large waves-effect waves-light light-green accent-4'><i class='material-icons'>add</i></button>";
+    addBtnDiv.appendChild(addBtnUI);
+
+    addBtnUI.addEventListener('click', function (){
+        $('#modal1').openModal();
+    });
 }
 
 function initMap() {
@@ -117,9 +128,13 @@ function initMap() {
     // constructor passing in this DIV.
     var centerControlDiv = document.createElement('div');
     var centerControl = new CenterControl(centerControlDiv, map);
-
     centerControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+
+    var addBtnDiv = document.createElement('div');
+    var addBtn = new AddBtn(addBtnDiv);
+    addBtnDiv.index = 1;
+    map.controls[google.maps.ControlPosition.LEFT_CENTER].push(addBtnDiv);
 
     // every time the map is clicked on,
     // a pin is dropped and the previous pin is removed
@@ -259,6 +274,9 @@ $(document).ready(function() {
     hideIfOnPage("#location");
     hideIfOnPage("#quantity");
     hideIfOnPage("#foodtype");
+
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal-trigger').leanModal();
 
     //when the select changes display the desired div and hide any that are currently showing.
     $("#mapselect").change(function() {

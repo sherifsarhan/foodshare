@@ -44,7 +44,6 @@ will record this data.-->
   <div id="login"></div>
   <div class="row" id="page-container">
     <div class="sidebar col s3">
-      <div id="list-container"></div>
       <div id="myfoodItems"></div>
       <div id="foodItems"></div>
 
@@ -54,16 +53,27 @@ will record this data.-->
     </div>
   </div>
 
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Enter your food information</h4>
+      <div id="list-container"></div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
   <script src="JS/map.js" type="text/javascript"></script>
   <!--Import Google Maps-->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaLT-2yZGBOd4O9teeuXSA-vvdtbPzkiI&callback=initMap"></script>
   <link rel="stylesheet" href="CSS/map.css?v=1.0">
   <!--remove localhost:8080/public/ when ready for production-->
-  <!--<script src="http://localhost:8080/public/JS/map-react.min.js"></script>-->
-  <!--<script src="http://localhost:8080/public/JS/login-react.min.js"></script>-->
-  <script src="JS/map-react.min.js"></script>
-  <script src="JS/login-react.min.js"></script>
+  <script src="http://localhost:8080/public/JS/map-react.min.js"></script>
+  <script src="http://localhost:8080/public/JS/login-react.min.js"></script>
+  <!--<script src="JS/map-react.min.js"></script>-->
+  <!--<script src="JS/login-react.min.js"></script>-->
 
 </body>
 
