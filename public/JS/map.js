@@ -172,6 +172,7 @@ var tags = {};
 foodshareRef.on("child_added", function(data){
     if(!data.val().lat || !data.val().lng) return;
 
+    //counting tags for visualization
     if ($.trim(data.val().tag).length === 0){
         // string is invalid
         data.val().tag = "Unknown";
@@ -262,13 +263,17 @@ $(document).ready(function() {
 });
 
 //---------functions to be used by react visuals-----
-function addUpdateMarker(text, tag, img) {
+function addUpdateMarker(text, desc, tag, img) {
+    if(desc == null) desc = "User has not posted a description";
+
     var markerText = text;
+    var markerDesc = desc;
     var markerTag = tag;
 
     var formData = new FormData();
     if(img) formData.append('img', img, img.name);
     formData.append('food',markerText);
+    formData.append('desc', markerDesc);
     formData.append('lat',pos.lat);
     formData.append('lng',pos.lng);
     formData.append('uid',uid);
