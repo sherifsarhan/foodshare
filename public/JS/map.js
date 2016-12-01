@@ -9,12 +9,9 @@ var config = {
 };
 firebase.initializeApp(config);
 
-
-//TODO: Fix bug where selectedMarker is the last added foodshare from onChildAdded. Make it null
 var foodshareRef = firebase.database().ref("foodshare");
-var foodCountDB = 0;
 foodshareRef.on("value", function(snapshot) {
-        foodCountDB = snapshot.numChildren(); // 1 ("name")
+        map.setCenter(pos);
         visualizeData();
     });
 
@@ -32,15 +29,10 @@ firebase.auth().onAuthStateChanged(function(user) {
     }
 });
 
-var foodList;
-var selectedMarker;
-var submitClicked = false;
-var latLng;
 var markers = {};
 var markersTest = {};
 var map;
 var count=0;
-var pointerMarker;
 var pos;
 //--------------GOOGLE MAPS-----------------
 /**
@@ -91,11 +83,10 @@ function CenterControl(controlDiv, map) {
     controlText.innerHTML = 'Center Map';
     controlUI.appendChild(controlText);
 
-    // Setup the click event listeners: simply set the map to Chicago.
+    // Setup the click event listeners: simply set the map to current coordinates.
     controlUI.addEventListener('click', function() {
         getLocation();
         map.setCenter(pos);
-
         var mev = {
             stop: null,
             latLng: new google.maps.LatLng(pos.lat, pos.lng)
@@ -110,7 +101,7 @@ function AddBtn(addBtnDiv){
     addBtnDiv.appendChild(addBtnUI);
 
     addBtnUI.addEventListener('click', function (){
-        $('#modal1').openModal();
+        $('#modalAddFood').openModal();
     });
 }
 
@@ -134,46 +125,7 @@ function initMap() {
     var addBtnDiv = document.createElement('div');
     var addBtn = new AddBtn(addBtnDiv);
     addBtnDiv.index = 1;
-    map.controls[google.maps.ControlPosition.LEFT_CENTER].push(addBtnDiv);
-
-    // every time the map is clicked on,
-    // a pin is dropped and the previous pin is removed
-    var prevMarker;
-    var firstRun = true;
-    map.addListener('click', function(e) {
-        // clear the food input box if the user clicked on the map
-        // after clicking on a pre-existing pin that populated the food
-        // input box with text
-        if (selectedMarker){
-            // $('.foodInfo').val("");
-            foodList.updateInput("","");
-        }
-
-        // indicate that the last item to be selected
-        // is not a pre-existing pin, rather, just a temporary
-        // pin on the map while deciding where to place a foodshare
-        selectedMarker = null;
-
-        // hides the previously clicked marker as long as there
-        // wasn't a recently submitted foodshare. There would need
-        // to be a brand new pin added to the map.
-        if(!submitClicked && !firstRun){
-            prevMarker.setMap(null);
-            prevMarker = null;
-            count--;
-        }
-        submitClicked = false;
-        firstRun = false;
-
-        // get the position of the click
-        // and add a new pin theres
-        latLng = e.latLng;
-        var marker = addMarker(latLng, map, "");
-        pointerMarker = marker;
-
-        // update the previous marker pointer
-        prevMarker = marker;
-    });
+    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(addBtnDiv);
 }
 
 // adds a new marker to the map
@@ -186,14 +138,9 @@ function addMarker(latLng, map, text, key, uidDB) {
         key: key,
         uid: uidDB
     });
-
     count++;
     return marker;
 }
-
-foodshareRef.on('child_changed', function(data) {
-    selectedMarker.infoWindowRef.setContent(data.val().food);
-});
 
 //if a foodshare gets deleted from the firebase db
 foodshareRef.on('child_removed', function(data) {
@@ -205,7 +152,6 @@ foodshareRef.on('child_removed', function(data) {
 
 
 var tags = {};
-var foodCount = 0;
 foodshareRef.on("child_added", function(data){
     if(!data.val().lat || !data.val().lng) return;
 
@@ -219,13 +165,10 @@ foodshareRef.on("child_added", function(data){
     else{
         tags[data.val().tag] = 1;
     }
-    foodCount++;
-    if(foodCount == foodCountDB){
-        visualizeData();
-    }
 
     //get coordinates
     myLatLng = {lat: data.val().lat, lng: data.val().lng};
+    map.setCenter(new google.maps.LatLng(data.val().lat, data.val().lng));
 
     var tempMarker = addMarker(myLatLng, map, data.val().food, data.key, data.val().uid);
 
@@ -236,7 +179,8 @@ foodshareRef.on("child_added", function(data){
 
     // // creates the info window for the marker
     var infoWindow = new google.maps.InfoWindow({
-        content: data.val().food
+        content: data.val().food,
+        disableAutoPan: true
     });
 
     //keep a reference of the marker's infowindow
@@ -245,15 +189,8 @@ foodshareRef.on("child_added", function(data){
     // open the infowindow to the corresponding marker
     infoWindow.open(tempMarker.get('map'), tempMarker);
 
-    selectedMarker = tempMarker;
-
     tempMarker.addListener('click', function () {
-        // var marker = this;
-        LatLng = tempMarker.position;
-        foodList.updateInput(data.val().food, data.val().tag);
-
         infoWindow.open(tempMarker.get('map'), tempMarker);
-        selectedMarker = tempMarker;
     });
 });
 
@@ -307,56 +244,16 @@ $(document).ready(function() {
     });
 });
 
-function deleteMarker (){
-    foodList.updateInput("", "");
-
-    //delete the selectedMarker
-    $.ajax({url: "/foodDelete",
-        type: 'DELETE',
-        data: { key: selectedMarker.key}});
-}
-
-
 //---------functions to be used by react visuals-----
 function addUpdateMarker(text, tag, img) {
     var markerText = text;
     var markerTag = tag;
 
-    //if we are updating the text of a selected marker
-    if (selectedMarker){
-        selectedMarker.text = markerText;
-        selectedMarker.tag = markerTag;
-        //updates the foodshare's name in the database but doesn't update the infowindow yet until the page refreshes
-
-        var formData = new FormData();
-        if(img) formData.append('img', img, img.name);
-        formData.append('key',selectedMarker.key);
-        formData.append('food',markerText);
-        formData.append('lat',latLng.lat());
-        formData.append('lng',latLng.lng());
-        formData.append('uid',uid);
-        formData.append('tag',markerTag);
-
-        $.ajax({
-            url: "/foodEdit",
-            type: "PUT",
-            data: formData,
-            processData: false,
-            contentType: false
-        });
-
-        return;
-    }
-    else if(pointerMarker != null) {
-        pointerMarker.setMap(null);
-        pointerMarker = null;
-        selectedMarker = null;
-    }
     var formData = new FormData();
     if(img) formData.append('img', img, img.name);
     formData.append('food',markerText);
-    formData.append('lat',latLng.lat());
-    formData.append('lng',latLng.lng());
+    formData.append('lat',pos.lat);
+    formData.append('lng',pos.lng);
     formData.append('uid',uid);
     formData.append('tag',markerTag);
 
@@ -369,11 +266,7 @@ function addUpdateMarker(text, tag, img) {
         contentType: false
     });
 
-    submitClicked = true;
-}
-
-function getFoodList(render){
-    foodList = render;
+    $('#modalAddFood').closeModal();
 }
 
 function checkLoggedIn(){

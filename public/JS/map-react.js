@@ -62,26 +62,24 @@ $('.sidebar.col.s3').on('click', ".activator", function () {
         foodMarker = markersTest[$(this).parent().parent().data('key')];
     }
 
-    pos = {
+    var foodPos = {
         lat:    foodMarker.lat,
         lng:    foodMarker.lng
     };
-    map.setCenter(pos);
+    map.setCenter(foodPos);
 });
 
 $('#myfoodItems').on('click', '.dropdown-button.delete', function() {
-    //delete the selectedMarker
+    //delete the selectedMarker from map
     $.ajax({url: "/foodDelete",
         type: 'DELETE',
         data: { key: $(this).data('activates')}});
+    //delete item from left sidebar list
     $(this).parent().parent().parent().remove();
 });
 
 function createFood(text, img, lat, lng, key, foodUID)
 {
-    //TODO: CHECK TO SEE IF USER IS LOGGED IN, ONLY ALLOW DELETE BUTTON TO SHOW UP ON USER'S OWN SHARES
-    //TODO: OTHERWISE, SHOW THE REPORT BUTTON
-
     var foodDiv = '#foodItems';
     var contentButtonHTML;
     if(signedIn && foodUID == uid) {
@@ -164,9 +162,6 @@ var FoodListApp = React.createClass({
     getInitialState: function() {
         return {items: [], text: '', tag: '', img: '', imgPreview: false};
     },
-    componentDidMount: function(){
-        getFoodList(this);
-    },
     onChange: function(e) {
         this.setState({text: e.target.value});
     },
@@ -179,9 +174,8 @@ var FoodListApp = React.createClass({
             alert("You must be signed in to add a FoodShare!");
             return;
         }
-        // e.preventDefault(); // This is, by default, submit button by form. Make sure it isn't submitted.
-        //check to see if a location has been selected and that text has been added to the food form
-        if(!latLng || this.state.text == ''){
+        //check to see if  text has been added to the food form
+        if(this.state.text == ''){
             console.log("Please either select a location or enter in the food text");
             return;
         }
@@ -304,7 +298,7 @@ class ImageUpload extends React.Component {
     }
 }
 
-var foodList = ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
+ReactDOM.render(<FoodListApp />, document.getElementById('list-container'));
 
 //the add and delete buttons have a problem.
 //when clicked, they stay focused, and don't blur again. this fixes it.
