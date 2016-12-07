@@ -120,7 +120,8 @@ function initMap() {
     var mapDiv = document.getElementById('map');
     map = new google.maps.Map(mapDiv, {
         center: {lat: 38.8320, lng: -77.3116},
-        zoom: 16
+        zoom: 16,
+        gestureHandling: 'cooperative'
     });
     directionsDisplay.setMap(map);
 
