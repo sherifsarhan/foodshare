@@ -1,6 +1,6 @@
 # foodshare
 
-https://cryptic-badlands-95460.herokuapp.com/map.html
+https://foodshareio.herokuapp.com/
 
 Usage:
 
