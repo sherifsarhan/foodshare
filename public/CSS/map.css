@@ -6,6 +6,13 @@ html, body{
     right:0;
 }
 
+@media screen and (max-width: 400px) {
+  .gm-style-mtc {
+    display:none;
+  }
+
+}
+
 /*.modal { width: 50% !important  }  !* increase the width as per you desire *!*/
 
 div.col.input-Field{

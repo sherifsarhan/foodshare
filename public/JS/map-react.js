@@ -37,7 +37,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 });
 
 var currentlyRevealedParent;
-$('.sidebar.col.s3').on('click', ".activator", function () {
+$('.sidebar.col.l3.s6').on('click', ".activator", function () {
     // only one food item description should be open at time
     //Is a foodshare description currently open?
     if(currentlyRevealedParent){

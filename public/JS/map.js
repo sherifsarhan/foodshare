@@ -89,7 +89,7 @@ function CenterControl(controlDiv, map) {
     controlText.style.lineHeight = '38px';
     controlText.style.paddingLeft = '5px';
     controlText.style.paddingRight = '5px';
-    controlText.innerHTML = 'Center Map';
+    controlText.innerHTML = 'My Location';
     controlUI.appendChild(controlText);
 
     // Setup the click event listeners: simply set the map to current coordinates.
@@ -137,13 +137,13 @@ function initMap() {
     centerControlDiv.className = 'empty2';
     var centerControl = new CenterControl(centerControlDiv, map);
     centerControlDiv.index = 2;
-    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
 
     var addBtnDiv = document.createElement('div');
     addBtnDiv.className = 'empty';
     var addBtn = new AddBtn(addBtnDiv);
     addBtnDiv.index = 1;
-    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(addBtnDiv);
+    map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(addBtnDiv);
 }
 
 // adds a new marker to the map
