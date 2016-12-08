@@ -171,9 +171,9 @@ class NavBar extends React.Component{
         return(
             <div style={{height:"100%"}}>
                 <nav className="navbar navbar-light bg-faded">
+                    <a href="#" className="brand-logo">Foodshare</a>
                     <ul className="nav navbar-nav" style={{height:"100%", width:"100%", position: "relative"}}>
                         <li className="nav-item" style={{height:"100%", width:"100%"}}>
-                            <h4 className="brand-logo logo left">- Foodshare -</h4>>
                             {this.state.loginState ?
                                 <Button className="lgnRegBtn right deep-purple lighten-2" waves="light" onClick={this.handleLogout}>
                                     {this.state.currentUser} (Logout)

@@ -106,7 +106,8 @@ function CenterControl(controlDiv, map) {
 
 function AddBtn(addBtnDiv){
     var addBtnUI = document.createElement('div');
-    addBtnUI.innerHTML = "<button id='addFoodshareMapBtn' class='btn-floating btn-large waves-effect waves-light light-green accent-4'><i class='material-icons'>add</i></button>";
+    addBtnUI.innerHTML = "<button id='addFoodshareMapBtn' class='btn-floating btn-large waves-effect waves-light light-green accent-4'><i class='material-icons'>add</i></button><b>Add a new foodshare</b>";
+    addBtnUI.style.fontSize = '16px';
     addBtnDiv.appendChild(addBtnUI);
 
     addBtnUI.addEventListener('click', function (){
@@ -131,13 +132,13 @@ function initMap() {
     helperAddDiv.className = 'empty3';
     var helperAdd = new HelperAdd(helperAddDiv);
     helperAddDiv.index = 0;
-    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(helperAddDiv);
+    // map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(helperAddDiv);
 
     var centerControlDiv = document.createElement('div');
     centerControlDiv.className = 'empty2';
     var centerControl = new CenterControl(centerControlDiv, map);
     centerControlDiv.index = 2;
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+    map.controls[google.maps.ControlPosition.LEFT_CENTER].push(centerControlDiv);
 
     var addBtnDiv = document.createElement('div');
     addBtnDiv.className = 'empty';

@@ -67,10 +67,16 @@ h4{
     margin-right: 2%;
 }
 
-.logo{
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: 1%;
+@media only screen and (max-width: 992px){
+nav .brand-logo {
+  left: 0%;
+  -webkit-transform: translateX(0%);
+  transform: translateX(0%);
+}
+}
+
+nav .brand-logo{
+    top: 2%;
 }
 
 .helpBtn{
