@@ -28,7 +28,7 @@ div.col.input-Field{
 }
 
 #modalAddFood{
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 h4{
