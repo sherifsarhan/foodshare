@@ -203,7 +203,7 @@ class NavBar extends React.Component{
                                    trigger={
                                        <Button className="helpBtn right" waves="light">Help</Button>
                                    }>
-                                To add a new foodShare, you must be signed in using your email, Google, or Facebook.
+                                To add a new foodShare, you must be signed in using your e-mail, Google, or Facebook.
                                 Click anywhere on the map to specify the location of the foodShare, or just click on the "Center Map" button
                                 to find your current location. Then, add the name of your foodShare, a description, and a tag. You may
                                 also add an image by clicking on "Choose File." Once you finalize the information, click "Add".
