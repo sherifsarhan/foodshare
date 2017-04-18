@@ -1,6 +1,6 @@
 # foodshare
 
-https://foodshareio.herokuapp.com/
+sharefood.me
 
 Usage:
 
