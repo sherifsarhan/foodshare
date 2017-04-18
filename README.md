@@ -1,6 +1,6 @@
 # foodshare
 
-sharefood.me
+https://sharefood.me
 
 Usage:
 
