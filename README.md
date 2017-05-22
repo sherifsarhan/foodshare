@@ -34,3 +34,5 @@ building, pushing to repo, and deploying:
 -Commit and Push changes
 
 -run git push heroku gh-pages:master
+
+if heroku node not running: heroku ps:scale web=1
