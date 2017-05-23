@@ -6,18 +6,6 @@ import ReactDOM from 'react-dom'
 import {Modal, Button, Input, Row, Col} from 'react-materialize'
 var ReactTestUtils = require('react-addons-test-utils');
 
-// var config = {
-//     apiKey: "AIzaSyCtdy0Gf8tNWQC4bS6QcnH3X-vknhfY3R8",
-//     authDomain: "foodshare-1474316972332.firebaseapp.com",
-//     databaseURL: "https://foodshare-1474316972332.firebaseio.com",
-//     storageBucket: "foodshare-1474316972332.appspot.com",
-//     messagingSenderId: "151948214475"
-// };
-//
-// firebase.initializeApp(config);
-//
-// var foodshareRef = firebase.database().ref("foodshare");
-
 var signedIn;
 var uid;
 class NavBar extends React.Component{
@@ -203,13 +191,10 @@ class NavBar extends React.Component{
                                    trigger={
                                        <Button className="helpBtn right" waves="light">Help</Button>
                                    }>
-                                To add a new foodShare, you must be signed in using your e-mail, Google, or Facebook.
-                                Click anywhere on the map to specify the location of the foodShare, or just click on the "Center Map" button
-                                to find your current location. Then, add the name of your foodShare, a description, and a tag. You may
-                                also add an image by clicking on "Choose File." Once you finalize the information, click "Add".
-                                Your foodShares will appear first on the left hand side of the page, above everyone else's foodShares.
-                                You may delete your own foodShares by clicking the "Delete" button next to them. You may report other foodShares
-                                by clicking the "Report" button.
+                                <br></br>
+                                1. Click on an image of the food you are interested in to find out more about it.
+                                <br></br>
+                                2. To add a new foodShare, you must be signed in. Then, click the green "Add Foodshare" button.
                             </Modal>
                         </li>
                     </ul>

@@ -111,7 +111,7 @@ function AddBtn(addBtnDiv){
     addBtnDiv.appendChild(addBtnUI);
 
     addBtnUI.addEventListener('click', function (){
-        $('#modalAddFood').openModal();
+        $('#modalAddFood').modal('open');
     });
 }
 
@@ -233,7 +233,7 @@ $(document).ready(function() {
     hideIfOnPage("#foodtype");
 
     // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-    $('.modal-trigger').leanModal();
+    $('#modalAddFood').modal();
 
     //when the select changes display the desired div and hide any that are currently showing.
     $("#mapselect").change(function() {
@@ -290,7 +290,7 @@ function addUpdateMarker(text, desc, tag, img) {
         contentType: false
     });
 
-    $('#modalAddFood').closeModal();
+    $('#modalAddFood').modal('close');
     Materialize.toast('Foodshare added!', 3000, 'rounded')
 }
 
