@@ -31,7 +31,7 @@ building, pushing to repo, and deploying:
 
 -run webpack
 
--Commit and Push changes
+-re-Commit and re-Push changes (because webpack generates permanent js unlike webpack-dev-server which generates temporary js)
 
 -run git push heroku gh-pages:master
 
