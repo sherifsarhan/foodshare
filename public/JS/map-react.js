@@ -90,6 +90,12 @@ $('#foodItems').on('click', '.dropdown-button.delete', function() {
 
 function createFood(text, desc, img, lat, lng, key, foodUID)
 {
+    //check if text is too long for the label
+    var finalText = text;
+    // if(text.length > 13){
+    //     finalText = text.substring(0,12) + "...";
+    // }
+
     var foodDiv = '#foodItems';
     var contentButtonHTML;
     if(signedIn && foodUID == uid) {
@@ -111,13 +117,14 @@ function createFood(text, desc, img, lat, lng, key, foodUID)
                         '<img class="activator" src="'+img+'">'+
                     '</div>'+
                     '<div class="card-content">'+
-                        contentButtonHTML+
-                        '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
+                        // contentButtonHTML+
+                        '<span class="card-title chip activator grey-text text-darken-4">'+finalText+'</span>'+
                         '<p><a class="activator" href="#">Click here for more details</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
                         '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
                         '<p>'+desc+'</p>'+
+                        contentButtonHTML+
                     '</div>'+
                 '</div>'+
             '</div>'
@@ -128,16 +135,17 @@ function createFood(text, desc, img, lat, lng, key, foodUID)
             '<div id="foodItem" data-key='+key+' class="foodItem">' +
                 '<div class="card">'+
                     '<div class="card-content">'+
-                        contentButtonHTML+
+                        // contentButtonHTML+
                         '<ul id='+key+' class="dropdown-content">'+
                             '<li><a href="#!">one</a></li>'+
                         '</ul>'+
-                        '<span class="card-title chip activator grey-text text-darken-4">'+text+'</span>'+
+                        '<span class="card-title chip activator grey-text text-darken-4">'+finalText+'</span>'+
                         '<p><a class="activator" href="#">Click here for more details</a></p>'+
                     '</div>'+
                     '<div class="card-reveal">'+
                         '<span class="card-title grey-text text-darken-4">'+text+'<i class="material-icons right">close</i></span>'+
                         '<p>'+desc+'</p>'+
+                         contentButtonHTML+
                     '</div>'+
                 '</div>'+
             '</div>'

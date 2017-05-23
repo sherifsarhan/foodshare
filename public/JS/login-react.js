@@ -95,7 +95,7 @@ class NavBar extends React.Component{
     }
 
     closeModal(){
-        $('#modal1').closeModal();
+        $('#modal1').modal('close');
         this.setState({loginState: true, showLoginBox: false, currentUser: this.state.email});
     }
 
@@ -195,6 +195,8 @@ class NavBar extends React.Component{
                                 1. Click on an image of the food you are interested in to find out more about it.
                                 <br></br>
                                 2. To add a new foodShare, you must be signed in. Then, click the green "Add Foodshare" button.
+                                <br></br>
+                                3. Clicking on the "My Location" button will focus the map to your current location.
                             </Modal>
                         </li>
                     </ul>

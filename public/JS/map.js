@@ -41,7 +41,6 @@ var pos;
  * This constructor takes the control DIV as an argument.
  * @constructor
  */
-getLocation();
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -227,6 +226,7 @@ function hideIfOnPage(hideID) {
 
 //-------------DOCUMENT READY----------------
 $(document).ready(function() {
+    getLocation();
     //Initially hides the elements which will be toggled by the select
     hideIfOnPage("#location");
     hideIfOnPage("#quantity");
